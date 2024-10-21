@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -8,8 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation";
 
 export function alunos() {
+  const router = useRouter();
+
   return (
     <div>
         <Table className="max-w-[600px] w-full mx-auto border mt-[10%]">
@@ -40,7 +45,7 @@ export function alunos() {
             </TableBody>
         </Table>
         <div className="flex flex-row max-w-[10%] max-w-[600px] w-full mx-auto mt-[5%] items-center justify-center gap-x-[4%]">
-          <Button className="w-full">
+          <Button className="w-full" onClick={() => router.push("/paineldecontrole/alunos/criarAluno")}>
               Adicionar Aluno
           </Button>
 

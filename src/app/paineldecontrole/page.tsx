@@ -9,7 +9,7 @@ export function ControlPanel() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="flex flex-col w-[400px] border p-4">
-        <h1 className="text-center">Painel de Controle</h1>
+        <h1 className="text-center text-3xl font-bold mb-[5%]">Painel de Controle</h1>
         <Button className="w-full mb-2" onClick={() => router.push("/paineldecontrole/alunos")}>
           Alunos
         </Button>
