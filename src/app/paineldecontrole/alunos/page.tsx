@@ -56,6 +56,8 @@ export function alunos() {
           <Button className="w-full" >
               Editar Aluno
           </Button>
+
+          <Button className="w-full" onClick={() => router.push("/paineldecontrole")}>Voltar</Button>
         </div>
     </div>
   )

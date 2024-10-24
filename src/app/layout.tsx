@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "SISUNI",
-  description: "Sistema acadêmico",
+  title: "PPE - Portal Pesquisa e Extensão",
+  description: "Portal Pesquisa e Extensão",
 };
 
 export default function RootLayout({
