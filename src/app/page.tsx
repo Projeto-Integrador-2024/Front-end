@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation";
 
 
+
 // Define a interface para o tipo dos itens
 interface Project {
   vaga_id: number;
@@ -69,51 +70,51 @@ export default function Example() {
 
   return (
     <div className='min-h-screen flex flex-col'>
-      <header className="w-full bg-gray-700 text-white p-4">
+      <header className="w-full bg-gray-800 text-white p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-2xl">Portal Pesquisa e Extensão</h1>
+          <div className="flex items-center space-x-4">
+            <img src="/images/Logo_PI.png" alt="Logo" className="h-20" width={80} height={80} />
+            <h1 className="text-2xl font-semibold">Portal Pesquisa e Extensão</h1>
+          </div>
           <nav className="space-x-4">
             <Link href="/" className="hover:text-gray-300">Home</Link>
             <Link href="/projects" className="hover:text-gray-300">Projetos</Link>
             <Link href="/about" className="hover:text-gray-300">Sobre</Link>
             <Link href="/contact" className="hover:text-gray-300">Contato</Link>
-            <button 
-              type="button" 
-              className="text-sm font-semibold text-black bg-green-400 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md px-4 py-2 transition duration-150" 
-              onClick={() => router.push("/login")}>Login
+            <button
+              type="button"
+              className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md px-4 py-2 transition duration-150"
+              onClick={() => router.push("/login")}
+            >
+              Login
             </button>
           </nav>
         </div>
       </header>
-      
-      <main className="flex-grow bg-slate-100 flex flex-col justify-center items-center p-4">
-        <h1 className="text-3xl font-bold mb-[3%]">Projetos disponíveis</h1>
+
+      <main className="flex-grow bg-gray-100 flex flex-col justify-center items-center p-4">
+        <h1 className="text-3xl font-bold mb-5 text-gray-800">Projetos disponíveis</h1>
         <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="divide-y divide-gray-200">
             <ul role="list" className="divide-y divide-gray-200">
               {paginatedItems.map((item) => (
-                <li key={item.vaga_id} className="py-4 px-6 cursor-pointer hover:text-blue-600 group">
+                <li key={item.vaga_id} className="py-4 px-6 cursor-pointer hover:bg-gray-50 group">
                   <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
                     <div className="min-w-0 flex-1">
-                      {/* Nome do projeto */}
                       <p className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">
                         {item.nome}
                       </p>
-                      {/* Tipo de projeto */}
-                      <p className="text-sm group-hover:text-blue-600">{item.tipo}</p>
-                      {/* Bolsa */}
-                      <p className="text-sm group-hover:text-blue-600">{item.bolsa}</p>
-                      {/* Descrição */}
-                      <p className="text-sm group-hover:text-blue-600">{item.descricao}</p>
-                      {/* Identificador da vaga */}
-                      <p className="text-xs group-hover:text-blue-600">Vaga ID: {item.vaga_id}</p>
+                      <p className="text-sm text-gray-600 group-hover:text-blue-600">{item.tipo}</p>
+                      <p className="text-sm text-gray-600 group-hover:text-blue-600">{item.bolsa}</p>
+                      <p className="text-sm text-gray-600 group-hover:text-blue-600">{item.descricao}</p>
+                      <p className="text-xs text-gray-500 group-hover:text-blue-600">Vaga ID: {item.vaga_id}</p>
                     </div>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
-  
+
           <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
             <div className="flex flex-1 justify-between sm:hidden">
               <button
@@ -167,12 +168,12 @@ export default function Example() {
           </div>
         </div>
       </main>
-  
-      <footer className="w-full bg-gray-700 text-white p-4">
-        <div className="max-w-7xl mx-auto text-center ">
+
+      <footer className="w-full bg-gray-800 text-white p-4">
+        <div className="max-w-7xl mx-auto text-center">
           <p className='text-sm'>© 2024 Portal Pesquisa e Extensão. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
-  );  
+  ); 
 }
