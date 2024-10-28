@@ -1,18 +1,50 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import axios from 'axios';
 
-const items = [
-  { id: 1, title: 'cuidar de abelhas', department: 'Engenharia Ambiental', type: 'Iniciação Científica', location: 'Sem bolsa' },
-  { id: 2, title: 'cuidar de cachorro', department: 'Engenharia Ambiental', type: 'Extensão', location: 'Sem bolsa' },
-  { id: 3, title: 'porta da utf', department: 'BCC', type: 'Extensão', location: 'Sem bolsa' },
-  // Adicione mais do backend
-];
+// Define a interface para o tipo dos itens
+interface Project {
+  vaga_id: number;
+  nome: string;
+  tipo: string;
+  bolsa: string;
+  descricao: string;
+}
 
 const ITEMS_PER_PAGE = 4;
 
 export default function Example() {
+  const [items, setItems] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Carrega os itens da API ao carregar o componente
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/VAGA/GET_ALL", {
+        method: "GET",
+        headers: {
+          "User-Agent": "insomnia/10.0.0"
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Erro na resposta da API: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log(data); // para verificar os dados recebidos
+      setItems(data); // armazena os dados no estado `items`
+    } catch (error) {
+      console.error('Erro ao buscar projetos:', error);
+    }
+  };
+  
+
   const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
 
   const handleNext = () => {
@@ -27,7 +59,6 @@ export default function Example() {
     setCurrentPage(pageNumber);
   };
 
- 
   const paginatedItems = items.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -40,13 +71,21 @@ export default function Example() {
         <div className="divide-y divide-gray-200">
           <ul role="list" className="divide-y divide-gray-200">
             {paginatedItems.map((item) => (
-              <li key={item.id} className="py-4 px-6 cursor-pointer hover:text-blue-600 group">
+              <li key={item.vaga_id} className="py-4 px-6 cursor-pointer hover:text-blue-600 group">
                 <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">{item.title}</p>
-                    <p className="text-sm group-hover:text-blue-600">{item.department}</p>
-                    <p className="text-sm group-hover:text-blue-600">{item.type}</p>
-                    <p className="text-sm group-hover:text-blue-600">{item.location}</p>
+                    {/* Nome do projeto */}
+                    <p className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">
+                      {item.nome}
+                    </p>
+                    {/* Tipo de projeto */}
+                    <p className="text-sm group-hover:text-blue-600">{item.tipo}</p>
+                    {/* Bolsa */}
+                    <p className="text-sm group-hover:text-blue-600">{item.bolsa}</p>
+                    {/* Descrição */}
+                    <p className="text-sm group-hover:text-blue-600">{item.descricao}</p>
+                    {/* Identificador da vaga */}
+                    <p className="text-xs group-hover:text-blue-600">Vaga ID: {item.vaga_id}</p>
                   </div>
                 </div>
               </li>
