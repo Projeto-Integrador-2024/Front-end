@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
+
 
 // Define a interface para o tipo dos itens
 interface Project {
@@ -18,7 +20,7 @@ const ITEMS_PER_PAGE = 4;
 export default function Example() {
   const [items, setItems] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const router = useRouter();
   // Carrega os itens da API ao carregar o componente
   useEffect(() => {
     fetchProjects();
@@ -75,6 +77,11 @@ export default function Example() {
             <Link href="/projects" className="hover:text-gray-300">Projetos</Link>
             <Link href="/about" className="hover:text-gray-300">Sobre</Link>
             <Link href="/contact" className="hover:text-gray-300">Contato</Link>
+            <button 
+              type="button" 
+              className="text-sm font-semibold text-black bg-green-400 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md px-4 py-2 transition duration-150" 
+              onClick={() => router.push("/login")}>Login
+            </button>
           </nav>
         </div>
       </header>
