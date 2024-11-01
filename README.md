@@ -29,7 +29,7 @@ git clone https://github.com/Projeto-Integrador-2024/Front-end.git
 $ cd Front-end
 ```
 
-Após a clonagem, abra o terminal e instale as dependências usando:
+Após a clonagem, abra o terminal e instale as dependências, usando:
 
 ```
 npm i
@@ -41,5 +41,5 @@ Execute a aplicação
 npm run dev
 ```
 
-Após a instalção das dependências, abra o link [http://localhost:3000](http://localhost:3000) para visualizar a página.
+Após a instalação e execução, abra o link [http://localhost:3000](http://localhost:3000) para visualizar a página.
 
