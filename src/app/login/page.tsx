@@ -21,6 +21,7 @@ export function Login({ className, ...props }: CardProps) {
   return (
     <div className='min-h-screen flex flex-col'>
       <header className="w-full bg-gray-800 text-white p-4">
+
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img src="/images/Logo_PI.png" alt="Logo" className="h-20" width={80} height={80} />
@@ -46,6 +47,7 @@ export function Login({ className, ...props }: CardProps) {
           <CardHeader className="flex flex-col items-center">
             <CardTitle className="text-3xl font-bold">PPE</CardTitle>
             <CardDescription className="text-2x1 font-bold">Digite suas credenciais para acessar o sistema.</CardDescription>
+
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="flex flex-col items-center space-y-4 rounded-md border p-4">
@@ -54,7 +56,9 @@ export function Login({ className, ...props }: CardProps) {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full">
+
+            <Button className="w-full" >
+
               Login
             </Button>
           </CardFooter>
@@ -91,6 +95,7 @@ export function Login({ className, ...props }: CardProps) {
               </p>
             </div>
           </div>
+
         </div>
       </footer>
     </div>
