@@ -70,7 +70,7 @@ export default function Example() {
 
   return (
     <div className='min-h-screen flex flex-col'>
-      <header className="w-full bg-gray-800 text-white p-4">
+      <header className="w-full bg-gray-800 text-slate-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img src="/images/Logo_PI.png" alt="Logo" className="h-20" width={80} height={80} />
@@ -78,12 +78,11 @@ export default function Example() {
           </div>
           <nav className="space-x-4">
             <Link href="/" className="hover:text-gray-300">Home</Link>
-            <Link href="/projects" className="hover:text-gray-300">Projetos</Link>
-            <Link href="/about" className="hover:text-gray-300">Sobre</Link>
-            <Link href="/contact" className="hover:text-gray-300">Contato</Link>
+            <Link href="/sobre" className="hover:text-gray-300">Sobre</Link>
+            <Link href="/contato" className="hover:text-gray-300">Contato</Link>
             <button
               type="button"
-              className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md px-4 py-2 transition duration-150"
+              className="text-sm font-semibold text-slate-200 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md px-4 py-2 transition duration-150"
               onClick={() => router.push("/login")}
             >
               Login
@@ -150,7 +149,7 @@ export default function Example() {
                     key={index + 1}
                     onClick={() => handlePageClick(index + 1)}
                     className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
-                      currentPage === index + 1 ? 'bg-gray-700 text-white' : 'text-gray-900 hover:bg-gray-50'
+                      currentPage === index + 1 ? 'bg-gray-700 text-slate-200' : 'text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     {index + 1}
@@ -169,9 +168,37 @@ export default function Example() {
         </div>
       </main>
 
-      <footer className="w-full bg-gray-800 text-white p-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className='text-sm'>© 2024 Portal Pesquisa e Extensão. Todos os direitos reservados.</p>
+      <footer className="bg-gray-800 py-5 text-slate-200 text-sm" id="contact">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-between">
+            <div className="lg:w-1/2 w-full text-center lg:text-left mb-4 lg:mb-0">
+              <p className="mb-2">1233 Via Rosalina, Campo-Mourão, PR</p>
+              <div className="flex flex-col sm:flex-row items-center sm:justify-start sm:space-x-4">
+                <p className="mb-2">
+                  <a className="hover:underline" href="mailto:suporte@ppe.com.br">suporte@ppe.com.br</a>
+                </p>
+                <p className="mb-0">
+                  <a className="hover:underline" href="tel:+44823456788">(44) 91234-1234</a>
+                </p>
+              </div>
+            </div>
+            <div className="lg:w-1/2 w-full text-center lg:text-right">
+              <div className="flex justify-center lg:justify-end space-x-4 mb-4">
+                <a href="#" aria-label="Facebook" className="text-slate-200 hover:text-blue-500 transition-colors">
+                  <i className="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" aria-label="Twitter" className="text-slate-200 hover:text-blue-400 transition-colors">
+                  <i className="fab fa-twitter-alt"></i>
+                </a>
+                <a href="#" aria-label="Instagram" className="text-slate-200 hover:text-pink-500 transition-colors">
+                  <i className="fab fa-instagram"></i>
+                </a>
+              </div>
+              <p className="text-sm">
+                COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
+              </p>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
