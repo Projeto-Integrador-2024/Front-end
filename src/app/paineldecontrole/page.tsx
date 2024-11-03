@@ -16,11 +16,8 @@ export function ControlPanel() {
         <Button className="w-full mb-2" onClick={() => router.push("/paineldecontrole/professores")}>
           Professores
         </Button>
-        <Button className="w-full mb-2" onClick={() => router.push("/paineldecontrole/salas")}>
-          Salas
-        </Button>
-        <Button className="w-full mb-2" onClick={() => router.push("/paineldecontrole/cursos")}>
-          Cursos
+        <Button className="w-full mb-2" onClick={() => router.push("/paineldecontrole/projetos")}>
+          Projetos
         </Button>
       </div>
     </div>

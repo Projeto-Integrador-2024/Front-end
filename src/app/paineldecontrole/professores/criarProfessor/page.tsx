@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import React, { useState } from 'react';
@@ -12,35 +11,34 @@ interface CreateUserProps {
     [key: string]: any;
 }
 
-export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) => {
+export const criarProfessor: React.FC<CreateUserProps> = ({ className, ...props }) => {
     const router = useRouter();
     const [nome, setNome] = useState<string>('');
-    const [sobrenome, setSobrenome] = useState<string>('');  // Estado adicionado para sobrenome
+    const [sobrenome, setSobrenome] = useState<string>('');
     const [cpf, setCpf] = useState<string>('');
-    const [periodo, setPeriodo] = useState<number>(1);  // Estado para período
+    const [curso, setCurso] = useState<string>('Ciência da Computação');
 
     const handleCreateUser = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:5000/ALUNO/CREATE', {
-                nome: `${nome} ${sobrenome}`,  // Concatenar nome e sobrenome
-                periodo: periodo,
+            const response = await axios.post('http://127.0.0.1:5000/createuser', JSON.stringify({
+                usuario: `${nome} ${sobrenome}`,
                 cpf: cpf,
-            }, {
+                curso: curso
+            }), {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            toast.success('Aluno criado com sucesso!');
-
+            toast.success('Usuário criado com sucesso!');
+            
             // Limpar o formulário
             setNome('');
-            setSobrenome('');  // Limpar sobrenome
+            setSobrenome('');
             setCpf('');
-            setPeriodo(1);
+            setCurso('Ciência da Computação');
         } catch (error) {
-            toast.error('Erro ao criar aluno!');
-            console.error('Erro ao criar aluno:', error);
+            toast.error('Erro ao criar usuário!');
+            console.error('Erro ao criar usuário:', error);
         }
     };
 
@@ -54,12 +52,12 @@ export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) =
             <form onSubmit={handleSubmit} className="flex items-center justify-center min-h-screen flex-col">
                 <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
-                        <h2 className="text-base leading-7 text-center mt-[5%] text-2xl font-bold">Adicionar Aluno</h2>
+                        <h2 className="text-base leading-7 text-center mt-[5%] text-2xl font-bold">Adicionar Professor</h2>
                         <p className="mt-1 text-sm leading-6 text-gray-600 text-center">Preencha os seguintes campos:</p>
                     </div>
                     <div className="border-b border-gray-900/10 pb-12">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">Informações Pessoais</h2>
-                        <p className="mt-1 text-sm leading-6 text-gray-600">Digite as informações do aluno.</p>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">Digite as informações do professor.</p>
                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                             <div className="sm:col-span-3">
                                 <label className="block text-sm font-medium leading-6 text-gray-900">Nome</label>
@@ -99,15 +97,17 @@ export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) =
                                 </div>
                             </div>
                             <div className="sm:col-span-5">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">Período</label>
+                                <label className="block text-sm font-medium leading-6 text-gray-900">Curso</label>
                                 <div className="mt-2">
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        value={periodo}
-                                        onChange={(e) => setPeriodo(Number(e.target.value))}
-                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    />
+                                    <select
+                                        id="course"
+                                        name="course"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                                        value={curso}
+                                        onChange={(e) => setCurso(e.target.value)}
+                                    >
+                                        <option>Ciência da Computação</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -125,4 +125,4 @@ export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) =
     );
 }
 
-export default CriarAluno;
+export default criarProfessor;
