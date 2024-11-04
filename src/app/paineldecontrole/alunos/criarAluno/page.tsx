@@ -21,7 +21,7 @@ export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) =
 
     const handleCreateUser = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:5000/ALUNO/CREATE', {
+            const response = await axios.post('http://127.0.0.1:5000/ADMIN/CREATE/ALUNO', {
                 nome: `${nome} ${sobrenome}`,  // Concatenar nome e sobrenome
                 periodo: periodo,
                 cpf: cpf,

@@ -28,7 +28,7 @@ export default function Example() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/VAGA/GET_ALL", {
+      const response = await fetch("http://127.0.0.1:5000/ADMIN/GET_ALL/VAGA", {
         method: "GET",
         headers: { "User-Agent": "insomnia/10.0.0" }
       });

@@ -32,7 +32,7 @@ export function Alunos() {
   useEffect(() => {
     const fetchAlunos = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/ALUNO/GET_ALL");
+        const response = await axios.get("http://127.0.0.1:5000/ADMIN/GET_ALL/ALUNO");
         setAlunos(response.data); 
       } catch (error) {
         console.error("Erro ao buscar alunos:", error);
@@ -51,7 +51,7 @@ export function Alunos() {
   const handleDeleteAluno = async () => {
     if (alunoSelecionado) {
       try {
-        await axios.delete(`http://127.0.0.1:5000/ALUNO/DELETE`, {
+        await axios.delete(`http://127.0.0.1:5000/ADMIN/DELETE/ALUNO`, {
           data: { ra: alunoSelecionado },
         });
         setAlunos((prevAlunos) => prevAlunos.filter((aluno) => aluno.ra !== alunoSelecionado));
@@ -75,7 +75,7 @@ export function Alunos() {
   const handleSaveEdicao = async () => {
     if (dadosEdicao) {
       try {
-        await axios.put(`http://127.0.0.1:5000/ALUNO/UPDATE`, dadosEdicao);
+        await axios.put(`http://127.0.0.1:5000/ADMIN/UPDATE/ALUNO`, dadosEdicao);
         setAlunos((prevAlunos) =>
           prevAlunos.map((aluno) =>
             aluno.ra === dadosEdicao.ra ? dadosEdicao : aluno
@@ -100,7 +100,7 @@ export function Alunos() {
             <TableHead className="w-[100px] text-center">Registro Acadêmico</TableHead>
             <TableHead className="text-center">Nome Completo</TableHead>
             <TableHead className="text-center">CPF</TableHead>
-            <TableHead className="text-center">Curso</TableHead>
+            <TableHead className="text-center">Período</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
