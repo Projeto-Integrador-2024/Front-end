@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 interface Aluno {
@@ -23,31 +23,50 @@ interface Aluno {
 
 export function Alunos() {
   const router = useRouter();
-  const [alunos, setAlunos] = useState<Aluno[]>([]); 
+  const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [alunoSelecionado, setAlunoSelecionado] = useState<string | null>(null);
   const [isEditando, setIsEditando] = useState(false);
   const [dadosEdicao, setDadosEdicao] = useState<Aluno | null>(null);
 
+  const tabelaRef = useRef<HTMLDivElement | null>(null); // Ref para a área da tabela e botões
   
   useEffect(() => {
     const fetchAlunos = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:5000/ADMIN/GET_ALL/ALUNO");
-        setAlunos(response.data); 
+        setAlunos(response.data);
       } catch (error) {
         console.error("Erro ao buscar alunos:", error);
       }
     };
 
-    fetchAlunos(); 
+    fetchAlunos();
   }, []);
 
-  
+  // Função para detectar clique fora da tabela
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tabelaRef.current && !tabelaRef.current.contains(event.target as Node)) {
+        // Resetar seleção e edição se o clique for fora da tabela
+        setAlunoSelecionado(null);
+        setIsEditando(false);
+        setDadosEdicao(null);
+      }
+    };
+
+    // Adiciona o listener para o clique fora
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    // Limpeza do listener quando o componente for desmontado
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleSelectAluno = (registroAcademico: string) => {
     setAlunoSelecionado((prev) => (prev === registroAcademico ? null : registroAcademico));
   };
 
- 
   const handleDeleteAluno = async () => {
     if (alunoSelecionado) {
       try {
@@ -55,14 +74,13 @@ export function Alunos() {
           data: { ra: alunoSelecionado },
         });
         setAlunos((prevAlunos) => prevAlunos.filter((aluno) => aluno.ra !== alunoSelecionado));
-        setAlunoSelecionado(null); 
+        setAlunoSelecionado(null);
       } catch (error) {
         console.error("Erro ao deletar aluno:", error);
       }
     }
   };
 
-  
   const handleEditAluno = () => {
     const alunoParaEditar = alunos.find((aluno) => aluno.ra === alunoSelecionado);
     if (alunoParaEditar) {
@@ -71,7 +89,6 @@ export function Alunos() {
     }
   };
 
-  
   const handleSaveEdicao = async () => {
     if (dadosEdicao) {
       try {
@@ -90,13 +107,13 @@ export function Alunos() {
   };
 
   return (
-    <div>
+    <div ref={tabelaRef}>
       <Table className="max-w-[600px] w-full mx-auto border mt-[10%]">
         <TableCaption className="caption-top text-3xl font-bold mb-[2%]">
           Lista de alunos.
         </TableCaption>
         <TableHeader>
-          <TableRow >
+          <TableRow>
             <TableHead className="w-[100px] text-center">Registro Acadêmico</TableHead>
             <TableHead className="text-center">Nome Completo</TableHead>
             <TableHead className="text-center">CPF</TableHead>
@@ -126,6 +143,7 @@ export function Alunos() {
           )}
         </TableBody>
       </Table>
+
       <div className="flex flex-row max-w-[600px] w-full mx-auto mt-[5%] items-center justify-center gap-x-[4%]">
         <Button className="w-full" onClick={() => router.push("/paineldecontrole/alunos/criarAluno")}>
           Adicionar Aluno
