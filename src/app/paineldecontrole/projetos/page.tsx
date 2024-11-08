@@ -15,7 +15,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 interface Projeto {
-  id: string;
+  vaga_id: string;
   nome: string;
   descricao: string;
   bolsa: number;
@@ -72,7 +72,7 @@ export function Projetos() {
         await axios.delete(`http://127.0.0.1:5000/ADMIN/DELETE/VAGA`, {
           data: { id: projetoSelecionado },
         });
-        setProjetos(prevProjetos => prevProjetos.filter(projeto => projeto.id !== projetoSelecionado));
+        setProjetos(prevProjetos => prevProjetos.filter(projeto => projeto.vaga_id !== projetoSelecionado));
         setProjetoSelecionado(null);
       } catch (error) {
         console.error("Erro ao deletar projeto:", error);
@@ -81,7 +81,7 @@ export function Projetos() {
   };
 
   const handleEditProjeto = () => {
-    const projetoParaEditar = projetos.find(projeto => projeto.id === projetoSelecionado);
+    const projetoParaEditar = projetos.find(projeto => projeto.vaga_id === projetoSelecionado);
     if (projetoParaEditar) {
       setDadosEdicao(projetoParaEditar);
       setIsEditando(true);
@@ -94,7 +94,7 @@ export function Projetos() {
         await axios.put(`http://127.0.0.1:5000/ADMIN/UPDATE/VAGA`, dadosEdicao);
         setProjetos(prevProjetos =>
           prevProjetos.map(projeto =>
-            projeto.id === dadosEdicao.id ? dadosEdicao : projeto
+            projeto.vaga_id === dadosEdicao.vaga_id ? dadosEdicao : projeto
           )
         );
         setIsEditando(false);
@@ -124,17 +124,17 @@ export function Projetos() {
           {projetos.length > 0 ? (
             projetos.map((projeto) => (
               <TableRow
-                key={projeto.id}
-                onClick={() => handleSelectProjeto(projeto.id)}
+                key={projeto.vaga_id}
+                onClick={() => handleSelectProjeto(projeto.vaga_id)}
                 className={`cursor-pointer ${
-                  projetoSelecionado === projeto.id ? "bg-blue-200" : ""
+                  projetoSelecionado === projeto.vaga_id ? "bg-blue-200" : ""
                 }`}
               >
-                <TableCell className="font-medium">{projeto.id}</TableCell>
+                <TableCell className="font-medium">{projeto.vaga_id}</TableCell>
                 <TableCell className="text-center">{projeto.nome}</TableCell>
                 <TableCell className="text-center">{projeto.descricao}</TableCell>
-                <TableCell className="text-center">{projeto.bolsa}</TableCell>
-                <TableCell className="text-center">{projeto.tipo}</TableCell>
+                <TableCell className="text-center">{projeto.bolsa === 1 ? "Com Bolsa" : "Sem Bolsa"}</TableCell>
+                <TableCell className="text-center">{projeto.tipo === 1 ? "Extensão" : "Iniciação Científica"}</TableCell>
               </TableRow>
             ))
           ) : (
@@ -185,28 +185,57 @@ export function Projetos() {
               className="block w-full mt-1 p-2 border rounded"
             />
           </label>
-          <label className="block mb-2">
-            Bolsa:
-            <input
-              type="number"
-              value={dadosEdicao.bolsa}
-              onChange={(e) =>
-                setDadosEdicao((prev) => prev ? { ...prev, bolsa: +e.target.value } : null)
-              }
-              className="block w-full mt-1 p-2 border rounded"
-            />
-          </label>
-          <label className="block mb-4">
-            Tipo:
-            <input
-              type="number"
-              value={dadosEdicao.tipo}
-              onChange={(e) =>
-                setDadosEdicao((prev) => prev ? { ...prev, tipo: +e.target.value } : null)
-              }
-              className="block w-full mt-1 p-2 border rounded"
-            />
-          </label>
+
+          {/* Radio Buttons para Bolsa */}
+          <label className="block mb-2">Bolsa:</label>
+          <div className="flex gap-4">
+            <label>
+              <input
+                type="radio"
+                name="bolsa"
+                value="1"
+                checked={dadosEdicao.bolsa === 1}
+                onChange={() => setDadosEdicao((prev) => prev ? { ...prev, bolsa: 1 } : null)}
+              />
+              Com Bolsa
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="bolsa"
+                value="0"
+                checked={dadosEdicao.bolsa === 0}
+                onChange={() => setDadosEdicao((prev) => prev ? { ...prev, bolsa: 0 } : null)}
+              />
+              Sem Bolsa
+            </label>
+          </div>
+
+          {/* Radio Buttons para Tipo */}
+          <label className="block mb-4">Tipo:</label>
+          <div className="flex gap-4">
+            <label>
+              <input
+                type="radio"
+                name="tipo"
+                value="1"
+                checked={dadosEdicao.tipo === 1}
+                onChange={() => setDadosEdicao((prev) => prev ? { ...prev, tipo: 1 } : null)}
+              />
+              Extensão
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="tipo"
+                value="2"
+                checked={dadosEdicao.tipo === 2}
+                onChange={() => setDadosEdicao((prev) => prev ? { ...prev, tipo: 2 } : null)}
+              />
+              Iniciação Científica
+            </label>
+          </div>
+
           <Button className="mr-2" onClick={handleSaveEdicao}>
             Salvar
           </Button>
