@@ -14,31 +14,29 @@ interface CreateUserProps {
 export const criarProfessor: React.FC<CreateUserProps> = ({ className, ...props }) => {
     const router = useRouter();
     const [nome, setNome] = useState<string>('');
-    const [sobrenome, setSobrenome] = useState<string>('');
+    const [sobrenome, setSobrenome] = useState<string>('');  // Estado adicionado para sobrenome
     const [cpf, setCpf] = useState<string>('');
-    const [curso, setCurso] = useState<string>('Ciência da Computação');
 
     const handleCreateUser = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:5000/createuser', JSON.stringify({
-                usuario: `${nome} ${sobrenome}`,
+            const response = await axios.post('http://127.0.0.1:5000/ADMIN/CREATE/PROFESSOR', {
+                nome: `${nome} ${sobrenome}`,  // Concatenar nome e sobrenome
                 cpf: cpf,
-                curso: curso
-            }), {
+            }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-            toast.success('Usuário criado com sucesso!');
-            
+
+            toast.success('Professor criado com sucesso!');
+
             // Limpar o formulário
             setNome('');
-            setSobrenome('');
+            setSobrenome('');  // Limpar sobrenome
             setCpf('');
-            setCurso('Ciência da Computação');
         } catch (error) {
-            toast.error('Erro ao criar usuário!');
-            console.error('Erro ao criar usuário:', error);
+            toast.error('Erro ao criar professor!');
+            console.error('Erro ao criar professor:', error);
         }
     };
 
@@ -46,7 +44,6 @@ export const criarProfessor: React.FC<CreateUserProps> = ({ className, ...props 
         event.preventDefault();
         handleCreateUser();
     };
-
     return (
         <>
             <form onSubmit={handleSubmit} className="flex items-center justify-center min-h-screen flex-col">
@@ -96,25 +93,12 @@ export const criarProfessor: React.FC<CreateUserProps> = ({ className, ...props 
                                     />
                                 </div>
                             </div>
-                            <div className="sm:col-span-5">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">Curso</label>
-                                <div className="mt-2">
-                                    <select
-                                        id="course"
-                                        name="course"
-                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                                        value={curso}
-                                        onChange={(e) => setCurso(e.target.value)}
-                                    >
-                                        <option>Ciência da Computação</option>
-                                    </select>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-end gap-x-6 mb-[4%]">
-                    <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={() => router.push("/paineldecontrole/alunos")}>
+                    <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={() => router.push("/paineldecontrole/professores")}>
                         Cancelar
                     </button>
                     <Button type="submit">Adicionar</Button>
