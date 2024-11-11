@@ -89,7 +89,7 @@ export default function Example() {
       </header>
 
       <main className="flex-grow bg-gray-100 flex flex-col justify-center items-center p-4">
-        <h1 className="text-3xl font-bold mb-5 text-gray-800 mb-[5%]">Projetos disponíveis</h1>
+        <h1 className="text-3xl font-bold mb-5 text-gray-800 mb-[2%]">Projetos disponíveis</h1>
 
         <div className="w-full max-w-4xl flex justify-end mb-4">
           <input

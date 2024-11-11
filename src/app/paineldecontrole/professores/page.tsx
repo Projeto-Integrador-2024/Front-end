@@ -168,7 +168,7 @@ export function Professor() {
               onChange={(e) =>
                 setDadosEdicao((prev) => prev ? { ...prev, nome: e.target.value } : null)
               }
-              className="block w-full mt-1 p-2 border rounded"
+              className="px-3 py-2 block w-full mt-1 p-2 border rounded"
             />
           </label>
           <label className="block mb-2">
@@ -179,7 +179,7 @@ export function Professor() {
               onChange={(e) =>
                 setDadosEdicao((prev) => prev ? { ...prev, cpf: e.target.value } : null)
               }
-              className="block w-full mt-1 p-2 border rounded"
+              className="px-3 py-2 block w-full mt-1 p-2 border rounded"
             />
           </label>
           <Button className="mr-2" onClick={handleSaveEdicao}>
