@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useDropzone } from 'react-dropzone'
 
 interface CreateProjectProps {
 	className?: string
@@ -21,21 +22,38 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({
 	const [descricao, setDescricao] = useState<string>('')
 	const [bolsa, setBolsa] = useState<string>('sem-bolsa')
 	const [tipo, setTipo] = useState<string>('extensao')
+	const [files, setFiles] = useState<File[]>([])
+
+	const onDrop = (acceptedFiles: File[]) => {
+		setFiles([...files, ...acceptedFiles])
+		toast.success(`${acceptedFiles.length} arquivo(s) adicionado(s) com sucesso!`)
+	}
+
+	const { getRootProps, getInputProps, isDragActive } = useDropzone({
+		onDrop,
+		accept: {
+			'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
+			'application/pdf': ['.pdf'],
+		},
+	})
 
 	const handleCreateProject = async () => {
 		try {
+			const formData = new FormData()
+			formData.append('nome', nome)
+			formData.append('descricao', descricao)
+			formData.append('bolsa', bolsa === 'com-bolsa' ? 'true' : 'false')
+			formData.append('tipo', tipo === 'extensao' ? 'extensao' : 'iniciacao-cientifica')
+			formData.append('criador_id', 'p0000002')
+
+			files.forEach((file) => formData.append('files', file))
+
 			const response = await axios.post(
 				'http://127.0.0.1:5000/ADMIN/CREATE/VAGA',
-				{
-					nome: nome,
-					descricao: descricao,
-					bolsa: bolsa === 'com-bolsa',
-					tipo: tipo === 'extensao',
-					criador_id: 'p0000002',
-				},
+				formData,
 				{
 					headers: {
-						'Content-Type': 'application/json',
+						'Content-Type': 'multipart/form-data',
 					},
 				}
 			)
@@ -46,6 +64,7 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({
 			setDescricao('')
 			setBolsa('sem-bolsa')
 			setTipo('extensao')
+			setFiles([])
 		} catch (error) {
 			toast.error('Erro ao criar projeto!')
 			console.error('Erro ao criar projeto:', error)
@@ -73,12 +92,7 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({
 						</p>
 					</div>
 					<div className='border-b border-gray-900/10 pb-12'>
-						<h2 className='text-base font-semibold leading-7 text-gray-900'>
-							Informações do Projeto
-						</h2>
-						<p className='mt-1 text-sm leading-6 text-gray-600'>
-							Digite as informações do projeto.
-						</p>
+						
 						<div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
 							<div className='sm:col-span-6'>
 								<label className='block text-sm font-medium leading-6 text-gray-900'>
@@ -166,9 +180,31 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({
 								</div>
 							</div>
 						</div>
+						<div className='text-center mt-[5%] cursor-pointer'>
+							<div
+								{...getRootProps()}
+								className={`p-6 border-2 border-dashed rounded-lg ${
+									isDragActive ? 'border-indigo-600 bg-gray-50' : 'border-gray-300'
+								}`}
+							>
+								<input {...getInputProps()} />
+								{isDragActive ? (
+									<p className='text-indigo-600'>Solte os arquivos aqui...</p>
+								) : (
+									<p className='text-slate-400'>Arraste e solte arquivos aqui, ou clique para selecionar.</p>
+								)}
+								<ul className='mt-4'>
+									{files.map((file, index) => (
+										<li key={index}>
+											{file.name}
+										</li>
+									))}
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div className='mt-6 flex items-center justify-end gap-x-6 mb-[4%]'>
+				<div className='mt-[2%] flex items-center justify-end gap-x-6 mb-[4%]'>
 					<button
 						type='button'
 						className='text-sm font-semibold leading-6 text-gray-900'
@@ -178,6 +214,7 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({
 					</button>
 					<Button type='submit'>Adicionar</Button>
 				</div>
+					
 			</form>
 			<ToastContainer />
 		</>

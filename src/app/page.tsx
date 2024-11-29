@@ -66,8 +66,8 @@ export default function Example() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="w-full bg-gray-800 text-slate-200 p-4">
+    <div className="min-h-screen flex flex-col ">
+      <header className="w-full bg-white text-stone-600 p-4 ">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img src="/images/Logo_PI.png" alt="Logo" className="h-20" width={80} height={80} />
@@ -156,7 +156,7 @@ export default function Example() {
         </div>
       </main>
 
-      <footer className="bg-gray-800 py-5 text-slate-200 text-sm">
+      <footer className="bg-white py-5 text-slate-800 text-sm">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <p className="mb-0">1233 Via Rosalina, Campo-Mourão, PR | suporte@ppe.com.br | (44) 91234-1234</p>
           <p className="text-sm">COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.</p>
