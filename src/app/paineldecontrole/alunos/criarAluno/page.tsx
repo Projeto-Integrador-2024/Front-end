@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,27 +15,42 @@ interface CreateUserProps {
 export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) => {
     const router = useRouter();
     const [nome, setNome] = useState<string>('');
-    const [sobrenome, setSobrenome] = useState<string>('');  // Estado adicionado para sobrenome
+    const [sobrenome, setSobrenome] = useState<string>(''); // Estado adicionado para sobrenome
     const [cpf, setCpf] = useState<string>('');
-    const [periodo, setPeriodo] = useState<number>(1);  // Estado para período
+    const [periodo, setPeriodo] = useState<number>(1); // Estado para período
+
+    const gerarSenhaAleatoria = () => {
+        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let senha = '';
+        for (let i = 0; i < 8; i++) {
+            senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+        }
+        return senha;
+    };
 
     const handleCreateUser = async () => {
+        if (!nome || !sobrenome || !cpf || !periodo) {
+            toast.error('Por favor, preencha todos os campos.');
+            return;
+        }
+    
+        const senhaGerada = gerarSenhaAleatoria();
+    
         try {
             const response = await axios.post('http://127.0.0.1:5000/ADMIN/CREATE/ALUNO', {
-                nome: `${nome} ${sobrenome}`,  // Concatenar nome e sobrenome
+                nome: `${nome} ${sobrenome}`,
                 periodo: periodo,
                 cpf: cpf,
+                senha: senhaGerada 
             }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            toast.success('Aluno criado com sucesso!');
-
-            // Limpar o formulário
+    
+            toast.success(`Aluno criado com sucesso! Senha: ${senhaGerada}`);
             setNome('');
-            setSobrenome('');  // Limpar sobrenome
+            setSobrenome('');
             setCpf('');
             setPeriodo(1);
         } catch (error) {
@@ -43,6 +58,7 @@ export const CriarAluno: React.FC<CreateUserProps> = ({ className, ...props }) =
             console.error('Erro ao criar aluno:', error);
         }
     };
+    
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();

@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
-import axios from 'axios';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { ChevronLeftIcon, ChevronRightIcon, UserIcon } from "@heroicons/react/20/solid";
+import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Define a interface para o tipo dos itens
 interface Project {
   vaga_id: number;
   nome: string;
@@ -19,7 +20,8 @@ const ITEMS_PER_PAGE = 4;
 export default function Example() {
   const [items, setItems] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,11 +40,26 @@ export default function Example() {
       const data = await response.json();
       setItems(data);
     } catch (error) {
-      console.error('Erro ao buscar projetos:', error);
+      console.error("Erro ao buscar projetos:", error);
     }
   };
 
-  // Aplica o filtro de busca e calcula as páginas com base nos itens filtrados
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/logout", { withCredentials: true });
+
+      if (response.status === 200) {
+        setIsAuthenticated(false);
+        toast.success("Você foi desconectado com sucesso!"); // Toast de sucesso ao deslogar
+        router.push("/login");
+      } else {
+        console.error("Erro no logout: Status diferente de 200", response);
+      }
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
+
   const filteredItems = items.filter((item) =>
     item.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -66,24 +83,50 @@ export default function Example() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col ">
-      <header className="w-full bg-white text-stone-600 p-4 ">
+    <div className="min-h-screen flex flex-col">
+      {/* ToastContainer adicionado no JSX */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
+      <header className="w-full bg-white text-stone-600 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img src="/images/Logo_PI.png" alt="Logo" className="h-20" width={80} height={80} />
             <h1 className="text-2xl font-semibold">Portal Pesquisa e Extensão</h1>
           </div>
-          <nav className="space-x-4">
+          <nav className="space-x-4 flex items-center">
             <Link href="/" className="hover:text-gray-300">Home</Link>
             <Link href="/sobre" className="hover:text-gray-300">Sobre</Link>
             <Link href="/contato" className="hover:text-gray-300">Contato</Link>
-            <button
-              type="button"
-              className="text-sm font-semibold text-slate-200 bg-blue-600 hover:bg-blue-700 rounded-md px-4 py-2"
-              onClick={() => router.push("/login")}
-            >
-              Login
-            </button>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-2">
+                <UserIcon className="h-6 w-6 text-blue-600" />
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-slate-200 bg-red-600 hover:bg-red-700 rounded-md px-4 py-2"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="text-sm font-semibold text-slate-200 bg-blue-600 hover:bg-blue-700 rounded-md px-4 py-2"
+                onClick={() => router.push("/login")}
+              >
+                Login
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -121,7 +164,8 @@ export default function Example() {
           <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <p className="text-sm text-gray-700">
-                Mostrando <span className="font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> a <span className="font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)}</span> de{' '}
+                Mostrando <span className="font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> a{" "}
+                <span className="font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)}</span> de{" "}
                 <span className="font-medium">{filteredItems.length}</span> resultados
               </p>
               <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
@@ -137,7 +181,7 @@ export default function Example() {
                     key={index + 1}
                     onClick={() => handlePageClick(index + 1)}
                     className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
-                      currentPage === index + 1 ? 'bg-gray-700 text-slate-200' : 'text-gray-900 hover:bg-gray-50'
+                      currentPage === index + 1 ? "bg-gray-700 text-slate-200" : "text-gray-900 hover:bg-gray-50"
                     }`}
                   >
                     {index + 1}
