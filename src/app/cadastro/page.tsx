@@ -17,6 +17,7 @@ export function Login({ className, ...props }: CardProps) {
 
   const [ra, setRa] = useState("");
   const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState("");
 
   const handleLogin = async () => {
     try {
@@ -58,96 +59,141 @@ export function Login({ className, ...props }: CardProps) {
   };
 
   return (
+    <div className="min-h-screen flex flex-col">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      /> {/* Componente que exibe os toasts */}
 
-      <div className="min-h-screen flex flex-col">
-        <header className="w-full bg-gray-800 text-white p-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img src="/images/Logo_PI.png" alt="Logo" className="h-20" />
-              <h1 className="text-2xl font-semibold">Portal Pesquisa e Extensão</h1>
-            </div>
-            <nav className="space-x-4">
-              <Link href="/" className="hover:text-gray-300">
-                Home
-              </Link>
-              <Link href="/sobre" className="hover:text-gray-300">
-                Sobre
-              </Link>
-              <Link href="/contatos" className="hover:text-gray-300">
-                Contato
-              </Link>
-            </nav>
+      <header className="w-full bg-gray-800 text-white p-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <img src="/images/Logo_PI.png" alt="Logo" className="h-20" />
+            <h1 className="text-2xl font-semibold">Portal Pesquisa e Extensão</h1>
           </div>
-        </header>
+          <nav className="space-x-4">
+            <Link href="/" className="hover:text-gray-300">
+              Home
+            </Link>
+            <Link href="/sobre" className="hover:text-gray-300">
+              Sobre
+            </Link>
+            <Link href="/contatos" className="hover:text-gray-300">
+              Contato
+            </Link>
+          </nav>
+        </div>
+      </header>
 
-        <div className="flex items-center justify-center flex-1">
-          <Card className={className} {...props}>
-            <CardHeader className="flex flex-col items-center">
-              <CardTitle className="text-3xl font-bold">PPE</CardTitle>
-              <CardDescription className="text-2x1 font-bold">
-                Cadastre seus dados.
-              </CardDescription>
-            </CardHeader>
+      <div className="flex items-center justify-center flex-1 w-full">
+        <Card className={`w-10/12 md:w-4/12 ${className}`} {...props}>
+          <CardHeader className="flex flex-col items-center">
+            <CardTitle className="text-3xl font-bold">PPE</CardTitle>
+            <CardDescription className="text-2xl font-bold">
+              Cadastre seus dados.
+            </CardDescription>
+          </CardHeader>
 
-            <CardContent className="grid gap-4">
-              <div className="flex flex-col items-center space-y-4 rounded-md border p-4">
+          <CardContent className="grid gap-4">
+            <div className="flex flex-col items-center space-y-4 rounded-md border p-4">
+              <div className="flex items-center space-x-4">
+                <p>Sou um:</p>
+                <label>
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="aluno"
+                    checked={userType === "aluno"}
+                    onChange={() => setUserType("aluno")}
+                    className="mr-2"
+                  />
+                  Aluno
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="professor"
+                    checked={userType === "professor"}
+                    onChange={() => setUserType("professor")}
+                    className="mr-2"
+                  />
+                  Professor
+                </label>
+              </div>
               <input
-                  type="text"
-                  placeholder="Nome"
-                  className="p-2 border rounded-md w-full"
-                  value={ra}
-                  //onChange={(e) => setRa(e.target.value)}  ra nome periodo cpf e senha
-                />
+                type="text"
+                placeholder="Nome"
+                className="p-2 border rounded-md w-full"
+                value={ra}
+                //onChange={(e) => setRa(e.target.value)}
+                disabled={!userType}
+              />
               <input
-                  type="number"
-                  placeholder="CPF"
-                  className="p-2 border rounded-md w-full"
-                  value={ra}
-                  //onChange={(e) => setRa(e.target.value)}  ra nome periodo cpf e senha
-                />
+                type="number"
+                placeholder="CPF"
+                className="p-2 border rounded-md w-full"
+                value={ra}
+                //onChange={(e) => setRa(e.target.value)}
+                disabled={!userType}
+              />
+              <input
+                type="text"
+                placeholder={userType === "aluno" ? "R.A" : "SIAPE"}
+                className="p-2 border rounded-md w-full"
+                value={ra}
+                onChange={(e) => setRa(e.target.value)} // COLOCAR VALIDAÇÃO: SE COMEÇAR COM A -> SetRA
+                disabled={!userType}
+              />
+              {userType === "aluno" && (
                 <input
-                  type="text"
-                  placeholder="R.A / SIAPE"
-                  className="p-2 border rounded-md w-full"
-                  value={ra}
-                  onChange={(e) => setRa(e.target.value)} //COLOAR VALIDAÇÃO: SE COMEÇAR COM A -> SetRA
-                />
-                 <input
                   type="number"
                   placeholder="Período"
                   className="p-2 border rounded-md w-full"
                   value={ra}
-                  //onChange={(e) => setRa(e.target.value)}  ra nome periodo cpf e senha
+                  //onChange={(e) => setRa(e.target.value)}
+                  disabled={!userType}
                 />
-                <input
-                  type="password"
-                  placeholder="Senha"
-                  className="p-2 border rounded-md w-full"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </CardContent>
-
-            <CardFooter className="flex flex-col">
-              <Button className="w-full" onClick={handleLogin}>
-                Cadastre-se
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-
-        <footer className="bg-gray-800 py-5 text-slate-200 text-sm">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-wrap items-center justify-between">
-              <p className="text-center w-full">
-                COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
-              </p>
+              )}
+              <input
+                type="password"
+                placeholder="Senha"
+                className="p-2 border rounded-md w-full"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={!userType}
+              />
             </div>
-          </div>
-        </footer>
+          </CardContent>
+
+          <CardFooter className="flex flex-col">
+            <Button className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white" onClick={handleLogin} disabled={!userType}>
+              Cadastre-se
+            </Button>
+            <Button className="mt-4 w-full font-semibold bg-transparent border border-gray-600 text-gray-600 hover:bg-gray-100 hover:text-gray-700" onClick={() => router.back()}>
+              Voltar
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
 
+      <footer className="bg-gray-800 py-5 text-slate-200 text-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-between">
+            <p className="text-center w-full">
+              COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
 

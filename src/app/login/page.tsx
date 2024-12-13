@@ -19,6 +19,11 @@ export function Login({ className, ...props }: CardProps) {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+    if (!ra || !password) {
+      toast.error("Por favor, preencha todos os campos.");
+      return;
+    }
+
     try {
       const response = await axios.post("http://127.0.0.1:5000/login", {
         username: ra,
@@ -72,7 +77,7 @@ export function Login({ className, ...props }: CardProps) {
       /> {/* Componente que exibe os toasts */}
 
       <div className="min-h-screen flex flex-col">
-        <header className="w-full bg-gray-800 text-white p-4">
+        <header className="w-full bg-gray-800 text-white p-4 shadow-md">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img src="/images/Logo_PI.png" alt="Logo" className="h-20" />
@@ -121,8 +126,11 @@ export function Login({ className, ...props }: CardProps) {
             </CardContent>
 
             <CardFooter className="flex flex-col">
-              <Button className="w-full" onClick={handleLogin}>
+              <Button className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white" onClick={handleLogin} disabled={!ra || !password}>
                 Login
+              </Button>
+              <Button className="mt-4 w-full font-semibold bg-transparent border border-gray-600 text-gray-600 hover:bg-gray-100 hover:text-gray-700" onClick={() => router.back()}>
+                Voltar
               </Button>
               <p className="mt-[5%]">Não possui uma conta? <Link href="/cadastro" className="text-blue-600 hover:text-blue-300">Cadastre-se</Link></p>
             </CardFooter>
@@ -135,6 +143,11 @@ export function Login({ className, ...props }: CardProps) {
               <p className="text-center w-full">
                 COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
               </p>
+              <div className="text-center w-full">
+                <a href="/" className="hover:text-white mx-2">Termos de Serviço</a> | 
+                <a href="/" className="hover:text-white mx-2">Política de Privacidade</a> | 
+                <a href="/" className="hover:text-white mx-2">Contato</a>
+              </div>
             </div>
           </div>
         </footer>
