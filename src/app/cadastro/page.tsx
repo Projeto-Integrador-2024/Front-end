@@ -58,18 +58,6 @@ export function Login({ className, ...props }: CardProps) {
   };
 
   return (
-    <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      /> {/* Componente que exibe os toasts */}
 
       <div className="min-h-screen flex flex-col">
         <header className="w-full bg-gray-800 text-white p-4">
@@ -97,18 +85,39 @@ export function Login({ className, ...props }: CardProps) {
             <CardHeader className="flex flex-col items-center">
               <CardTitle className="text-3xl font-bold">PPE</CardTitle>
               <CardDescription className="text-2x1 font-bold">
-                Digite suas credenciais para acessar o sistema.
+                Cadastre seus dados.
               </CardDescription>
             </CardHeader>
 
             <CardContent className="grid gap-4">
               <div className="flex flex-col items-center space-y-4 rounded-md border p-4">
-                <input
+              <input
                   type="text"
-                  placeholder="Registro Acadêmico"
+                  placeholder="Nome"
                   className="p-2 border rounded-md w-full"
                   value={ra}
-                  onChange={(e) => setRa(e.target.value)}
+                  //onChange={(e) => setRa(e.target.value)}  ra nome periodo cpf e senha
+                />
+              <input
+                  type="number"
+                  placeholder="CPF"
+                  className="p-2 border rounded-md w-full"
+                  value={ra}
+                  //onChange={(e) => setRa(e.target.value)}  ra nome periodo cpf e senha
+                />
+                <input
+                  type="text"
+                  placeholder="R.A / SIAPE"
+                  className="p-2 border rounded-md w-full"
+                  value={ra}
+                  onChange={(e) => setRa(e.target.value)} //COLOAR VALIDAÇÃO: SE COMEÇAR COM A -> SetRA
+                />
+                 <input
+                  type="number"
+                  placeholder="Período"
+                  className="p-2 border rounded-md w-full"
+                  value={ra}
+                  //onChange={(e) => setRa(e.target.value)}  ra nome periodo cpf e senha
                 />
                 <input
                   type="password"
@@ -122,9 +131,8 @@ export function Login({ className, ...props }: CardProps) {
 
             <CardFooter className="flex flex-col">
               <Button className="w-full" onClick={handleLogin}>
-                Login
+                Cadastre-se
               </Button>
-              <p className="mt-[5%]">Não possui uma conta? <Link href="/cadastro" className="text-blue-600 hover:text-blue-300">Cadastre-se</Link></p>
             </CardFooter>
           </Card>
         </div>
@@ -139,7 +147,7 @@ export function Login({ className, ...props }: CardProps) {
           </div>
         </footer>
       </div>
-    </>
+
   );
 }
 

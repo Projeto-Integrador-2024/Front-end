@@ -115,7 +115,7 @@ export default function Example() {
                   className="text-sm font-semibold text-slate-200 bg-red-600 hover:bg-red-700 rounded-md px-4 py-2"
                   onClick={handleLogout}
                 >
-                  Logout
+                  Sair
                 </button>
               </div>
             ) : (
