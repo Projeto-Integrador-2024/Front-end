@@ -30,7 +30,7 @@ export default function Example() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/ADMIN/GET_ALL/VAGA", {
+      const response = await fetch("http://127.0.0.1:5000/GET_ALL_VAGAS", {
         method: "GET",
         headers: { "User-Agent": "insomnia/10.0.0" }
       });
@@ -172,40 +172,88 @@ export default function Example() {
                 <button
                   onClick={handlePrevious}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 hover:bg-gray-50"
+                  className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-medium ${
+                    currentPage === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
                 >
                   <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                  <span className="sr-only">Anterior</span>
                 </button>
-                {[...Array(totalPages)].map((_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => handlePageClick(index + 1)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
-                      currentPage === index + 1 ? "bg-gray-700 text-slate-200" : "text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
+
+                {totalPages <= 5
+                  ? [...Array(totalPages)].map((_, index) => (
+                      <button
+                        key={index + 1}
+                        onClick={() => handlePageClick(index + 1)}
+                        className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
+                          currentPage === index + 1
+                            ? "bg-gray-700 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {index + 1}
+                      </button>
+                    ))
+                  : (
+                    <>
+                      {currentPage > 2 && (
+                        <button
+                          onClick={() => handlePageClick(1)}
+                          className="relative inline-flex items-center px-4 py-2 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50"
+                        >
+                          1
+                        </button>
+                      )}
+                      {currentPage > 3 && <span className="px-2 py-2 text-gray-500">...</span>}
+
+                      {[...Array(3)]
+                        .map((_, i) => currentPage - 1 + i)
+                        .filter((page) => page > 0 && page <= totalPages)
+                        .map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => handlePageClick(page)}
+                            className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
+                              currentPage === page
+                                ? "bg-gray-700 text-white"
+                                : "bg-white text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+
+                      {currentPage < totalPages - 2 && <span className="px-2 py-2 text-gray-500">...</span>}
+                      {currentPage < totalPages - 1 && (
+                        <button
+                          onClick={() => handlePageClick(totalPages)}
+                          className="relative inline-flex items-center px-4 py-2 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50"
+                        >
+                          {totalPages}
+                        </button>
+                      )}
+                    </>
+                  )}
+
                 <button
                   onClick={handleNext}
                   disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 hover:bg-gray-50"
+                  className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                    currentPage === totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
                 >
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                  <span className="sr-only">Próximo</span>
                 </button>
               </nav>
             </div>
           </div>
         </div>
       </main>
-
-      <footer className="bg-white py-5 text-slate-800 text-sm">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <p className="mb-0">1233 Via Rosalina, Campo-Mourão, PR | suporte@ppe.com.br | (44) 91234-1234</p>
-          <p className="text-sm">COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.</p>
-        </div>
-      </footer>
     </div>
   );
 }
