@@ -1,159 +1,236 @@
-"use client";
+'use client'
 
-import axios from "axios";
-import { useState } from "react";
-import Link from "next/link";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import axios from 'axios'
+import { useState } from 'react'
+import Link from 'next/link'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+	CardFooter,
+} from '@/components/ui/card'
 
-type CardProps = React.ComponentProps<typeof Card>;
+type CardProps = React.ComponentProps<typeof Card>
 
 export function Login({ className, ...props }: CardProps) {
-  const router = useRouter();
+	const router = useRouter()
 
-  const [ra, setRa] = useState(""); // Estado para armazenar o Registro Acadêmico
-  const [password, setPassword] = useState(""); // Estado para armazenar a senha
+	const [ra, setRa] = useState('') // Estado para armazenar o Registro Acadêmico
+	const [password, setPassword] = useState('') // Estado para armazenar a senha
 
-  const handleLogin = async () => {
-    if (!ra || !password) {
-      toast.error("Por favor, preencha todos os campos.");
-      return;
-    }
-  
-    try {
-      // Faz a requisição ao backend Flask
-      const response = await axios.post("http://127.0.0.1:5000/login", {
-        username: ra, // Envia o RA como 'username'
-        senha: password, // Envia a senha como 'senha'
-      });
-  
-      if (response.status === 200) {
-        const nome = response.data.nome || "usuário!";
-        
-        // Exibe uma mensagem de sucesso no toast
-        toast.success(`Bem-vindo, ${nome}`);
-  
-        // Adiciona uma mensagem de sucesso no console
-        console.log(`Login realizado com sucesso!`);
-  
-        // Redireciona para a página inicial
-        router.push("/");
-      }
-    } catch (error) {
-      // Tratamento de erros durante o login
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          toast.error(
-            error.response.data.error || "Erro ao realizar login. Verifique suas credenciais."
-          );
-          console.error("Erro no servidor:", error.response.data.error || "Erro desconhecido");
-        } else {
-          toast.error("Erro na conexão com o servidor.");
-          console.error("Erro na conexão com o servidor.");
-        }
-      } else {
-        toast.error("Erro desconhecido.");
-        console.error("Erro desconhecido:", error);
-      }
-    }
-  };
-  
+	// URL do backend configurada com variável de ambiente
+	const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'
 
-  return (
-    <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+	const handleLogin = async () => {
+		if (!ra || !password) {
+			toast.error('Por favor, preencha todos os campos.')
+			return
+		}
 
-      <div className="min-h-screen flex flex-col">
-        <header className="w-full bg-gray-800 text-white p-4 shadow-md">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img src="/images/Logo_PI.png" alt="Logo" className="h-20" />
-              <h1 className="text-2xl font-semibold">Portal Pesquisa e Extensão</h1>
-            </div>
-            <nav className="space-x-4">
-              <Link href="/" className="hover:text-gray-300">
-                Home
-              </Link>
-              <Link href="/sobre" className="hover:text-gray-300">
-                Sobre
-              </Link>
-              <Link href="/contatos" className="hover:text-gray-300">
-                Contato
-              </Link>
-            </nav>
-          </div>
-        </header>
+		// Verifica se o RA é um SIAPE (número de 7 dígitos)
+		const isSIAPE = /^[0-9]{7}$/.test(ra)
 
-        <div className="flex items-center justify-center flex-1">
-          <Card className={className} {...props}>
-            <CardHeader className="flex flex-col items-center">
-              <CardTitle className="text-3xl font-bold">PPE</CardTitle>
-              <CardDescription className="text-2x1 font-bold">
-                Digite suas credenciais para acessar o sistema.
-              </CardDescription>
-            </CardHeader>
+		try {
+			// Faz a requisição ao backend Flask, incluindo o tipo de usuário
+			const response = await axios.post('http://127.0.0.1:5000/login', {
+				username: ra, // Envia o RA ou SIAPE
+				senha: password, // Envia a senha
+				isSIAPE: isSIAPE, // Envia se é um SIAPE
+			})
 
-            <CardContent className="grid gap-4">
-              <div className="flex flex-col items-center space-y-4 rounded-md border p-4">
-                <input
-                  type="text"
-                  placeholder="Registro Acadêmico"
-                  className="p-2 border rounded-md w-full"
-                  value={ra}
-                  onChange={(e) => setRa(e.target.value)}
-                />
-                <input
-                  type="password"
-                  placeholder="Senha"
-                  className="p-2 border rounded-md w-full"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </CardContent>
+			if (response.status === 200) {
+				const nome = response.data.sucesso || 'usuário!'
+				toast.success(`Bem-vindo, ${nome}`)
+				console.log(`Login realizado com sucesso!`)
+				router.push('/') // Redireciona para a página inicial após login
+			}
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				if (error.response) {
+					toast.error(
+						error.response.data.erro ||
+							'Erro ao realizar login. Verifique suas credenciais.'
+					)
+					console.error(
+						'Erro no servidor:',
+						error.response.data.erro || 'Erro desconhecido'
+					)
+				} else {
+					toast.error('Erro na conexão com o servidor.')
+					console.error('Erro na conexão com o servidor.')
+				}
+			} else {
+				toast.error('Erro desconhecido.')
+				console.error('Erro desconhecido:', error)
+			}
+		}
+	}
 
-            <CardFooter className="flex flex-col">
-              <Button className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white" onClick={handleLogin} disabled={!ra || !password}>
-                Login
-              </Button>
-              <Button className="mt-4 w-full font-semibold bg-transparent border border-gray-600 text-gray-600 hover:bg-gray-100 hover:text-gray-700" onClick={() => router.back()}>
-                Voltar
-              </Button>
-              <p className="mt-[5%]">Não possui uma conta? <Link href="/cadastro" className="text-blue-600 hover:text-blue-300">Cadastre-se</Link></p>
-            </CardFooter>
-          </Card>
-        </div>
+	const handleLogout = async () => {
+		try {
+			// Faz a requisição de logout para o backend
+			const response = await axios.get('http://127.0.0.1:5000/logout')
 
-        <footer className="bg-gray-800 py-5 text-slate-200 text-sm">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-wrap items-center justify-between">
-              <p className="text-center w-full">
-                COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
-              </p>
-              <div className="text-center w-full">
-                <a href="/" className="hover:text-white mx-2">Termos de Serviço</a> | 
-                <a href="/" className="hover:text-white mx-2">Política de Privacidade</a> | 
-                <a href="/" className="hover:text-white mx-2">Contato</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </>
-  );
+			if (response.status === 200) {
+				toast.success('Você foi desconectado com sucesso.')
+				router.push('/login') // Redireciona para a página de login
+			}
+		} catch (error) {
+			toast.error('Erro ao tentar fazer logout.')
+			console.error('Erro no logout:', error)
+		}
+	}
+
+	return (
+		<>
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
+
+			<div className='min-h-screen flex flex-col'>
+				<header className='w-full bg-gray-800 text-white p-4 shadow-md'>
+					<div className='max-w-7xl mx-auto flex items-center justify-between'>
+						<div className='flex items-center space-x-4'>
+							<img
+								src='/images/Logo_PI.png'
+								alt='Logo'
+								className='h-20'
+							/>
+							<h1 className='text-2xl font-semibold'>
+								Portal Pesquisa e Extensão
+							</h1>
+						</div>
+						<nav className='space-x-4'>
+							<Link
+								href='/'
+								className='hover:text-gray-300'
+							>
+								Home
+							</Link>
+							<Link
+								href='/sobre'
+								className='hover:text-gray-300'
+							>
+								Sobre
+							</Link>
+							<Link
+								href='/contatos'
+								className='hover:text-gray-300'
+							>
+								Contato
+							</Link>
+						</nav>
+					</div>
+				</header>
+
+				<div className='flex items-center justify-center flex-1'>
+					<Card
+						className={className}
+						{...props}
+					>
+						<CardHeader className='flex flex-col items-center'>
+							<CardTitle className='text-3xl font-bold'>PPE</CardTitle>
+							<CardDescription className='text-2x1 font-bold'>
+								Digite suas credenciais para acessar o sistema.
+							</CardDescription>
+						</CardHeader>
+
+						<CardContent className='grid gap-4'>
+							<div className='flex flex-col items-center space-y-4 rounded-md border p-4'>
+								<input
+									type='text'
+									placeholder='Registro Acadêmico'
+									className='p-2 border rounded-md w-full'
+									value={ra}
+									onChange={(e) => setRa(e.target.value)}
+									aria-label='Registro Acadêmico'
+								/>
+								<input
+									type='password'
+									placeholder='Senha'
+									className='p-2 border rounded-md w-full'
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									aria-label='Senha'
+								/>
+							</div>
+						</CardContent>
+
+						<CardFooter className='flex flex-col'>
+							<Button
+								className='w-full font-semibold bg-green-600 hover:bg-green-700 text-white'
+								onClick={handleLogin}
+								disabled={!ra || !password}
+							>
+								Login
+							</Button>
+							<Button
+								className='mt-4 w-full font-semibold bg-transparent border border-gray-600 text-gray-600 hover:bg-gray-100 hover:text-gray-700'
+								onClick={() => router.back()}
+							>
+								Voltar
+							</Button>
+							<p className='mt-[5%]'>
+								Não possui uma conta?{' '}
+								<Link
+									href='/cadastro'
+									className='text-blue-600 hover:text-blue-300'
+								>
+									Cadastre-se
+								</Link>
+							</p>
+						</CardFooter>
+					</Card>
+				</div>
+
+				<footer className='bg-gray-800 py-5 text-slate-200 text-sm'>
+					<div className='container mx-auto px-4'>
+						<div className='flex flex-wrap items-center justify-between'>
+							<p className='text-center w-full'>
+								COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
+							</p>
+							<div className='text-center w-full'>
+								<a
+									href='/'
+									className='hover:text-white mx-2'
+								>
+									Termos de Serviço
+								</a>{' '}
+								|
+								<a
+									href='/'
+									className='hover:text-white mx-2'
+								>
+									Política de Privacidade
+								</a>{' '}
+								|
+								<a
+									href='/'
+									className='hover:text-white mx-2'
+								>
+									Contato
+								</a>
+							</div>
+						</div>
+					</div>
+				</footer>
+			</div>
+		</>
+	)
 }
 
-export default Login;
+export default Login
