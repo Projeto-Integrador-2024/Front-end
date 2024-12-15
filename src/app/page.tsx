@@ -13,6 +13,7 @@ interface Project {
   tipo: string;
   bolsa: string;
   descricao: string;
+  criador_nome: string;
 }
 
 const ITEMS_PER_PAGE = 4;
@@ -26,13 +27,34 @@ export default function Example() {
 
   useEffect(() => {
     fetchProjects();
+    checkAuthentication(); // Verifica a autenticação ao montar o componente
   }, []);
+
+  const checkAuthentication = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/is_authenticated", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao verificar autenticação");
+      }
+
+      const data = await response.json();
+      setIsAuthenticated(data.authenticated);
+    } catch (error) {
+      console.error("Erro ao verificar autenticação:", error);
+      setIsAuthenticated(false);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
       const response = await fetch("http://127.0.0.1:5000/GET_ALL_VAGAS", {
         method: "GET",
-        headers: { "User-Agent": "insomnia/10.0.0" }
+        headers: { "User-Agent": "insomnia/10.0.0" },
       });
       if (!response.ok) {
         throw new Error(`Erro na resposta da API: ${response.status}`);
@@ -155,6 +177,7 @@ export default function Example() {
                     <p className="text-sm text-gray-600">{item.bolsa}</p>
                     <p className="text-sm text-gray-600">{item.descricao}</p>
                     <p className="text-xs text-gray-500">Vaga ID: {item.vaga_id}</p>
+                    <p className="text-xs text-gray-500">Professor: {item.criador_nome}</p>
                   </div>
                 </div>
               </li>

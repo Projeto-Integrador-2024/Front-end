@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-import { AxiosError } from "axios";
 import { useState } from "react";
 import Link from "next/link";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,52 +14,53 @@ type CardProps = React.ComponentProps<typeof Card>;
 export function Login({ className, ...props }: CardProps) {
   const router = useRouter();
 
-  const [ra, setRa] = useState("");
-  const [password, setPassword] = useState("");
+  const [ra, setRa] = useState(""); // Estado para armazenar o Registro Acadêmico
+  const [password, setPassword] = useState(""); // Estado para armazenar a senha
 
   const handleLogin = async () => {
     if (!ra || !password) {
       toast.error("Por favor, preencha todos os campos.");
       return;
     }
-
+  
     try {
+      // Faz a requisição ao backend Flask
       const response = await axios.post("http://127.0.0.1:5000/login", {
-        username: ra,
-        senha: password,
+        username: ra, // Envia o RA como 'username'
+        senha: password, // Envia a senha como 'senha'
       });
-
-      console.log("Resposta do servidor:", response.data);
-
+  
       if (response.status === 200) {
         const nome = response.data.nome || "usuário!";
+        
+        // Exibe uma mensagem de sucesso no toast
         toast.success(`Bem-vindo, ${nome}`);
-        console.log("Toast de sucesso exibido");
-        router.push("/"); 
-      } else {
-        toast.error(response.data.error || "Erro desconhecido.");
+  
+        // Adiciona uma mensagem de sucesso no console
+        console.log(`Login realizado com sucesso!`);
+  
+        // Redireciona para a página inicial
+        router.push("/");
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
-
-      // Verifique se o erro é uma instância de AxiosError
+      // Tratamento de erros durante o login
       if (axios.isAxiosError(error)) {
-        // Se o erro for relacionado a uma resposta do servidor
         if (error.response) {
-          toast.error(error.response.data.error || "Erro ao realizar login. Verifique suas credenciais.");
-        } else if (error.request) {
-          // Se não houve resposta do servidor
-          toast.error("Não houve resposta do servidor. Verifique a conexão.");
+          toast.error(
+            error.response.data.error || "Erro ao realizar login. Verifique suas credenciais."
+          );
+          console.error("Erro no servidor:", error.response.data.error || "Erro desconhecido");
         } else {
-          // Se houve um erro ao configurar a requisição
-          toast.error("Erro ao tentar enviar a requisição.");
+          toast.error("Erro na conexão com o servidor.");
+          console.error("Erro na conexão com o servidor.");
         }
       } else {
-        // Caso seja um erro desconhecido
         toast.error("Erro desconhecido.");
+        console.error("Erro desconhecido:", error);
       }
     }
   };
+  
 
   return (
     <>
@@ -74,7 +74,7 @@ export function Login({ className, ...props }: CardProps) {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      /> {/* Componente que exibe os toasts */}
+      />
 
       <div className="min-h-screen flex flex-col">
         <header className="w-full bg-gray-800 text-white p-4 shadow-md">

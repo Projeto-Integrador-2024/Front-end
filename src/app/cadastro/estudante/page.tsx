@@ -32,7 +32,7 @@ export function CadastroAluno({ className, ...props }: CardProps) {
 
       if (response.status === 200) {
         toast.success("Cadastro realizado com sucesso!");
-        router.push("/"); // Redireciona o usuário para a página inicial
+        router.push("/login"); // Redireciona o usuário para a página inicial
       } else {
         toast.error(response.data.error || "Erro desconhecido.");
       }

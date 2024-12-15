@@ -14,46 +14,40 @@ interface CreateProjectProps {
 
 export const CriarProjeto: React.FC<CreateProjectProps> = ({ className, ...props }) => {
   const router = useRouter()
-  const [projects, setProjects] = useState([{ nome: '', descricao: '', bolsa: 'sem-bolsa', tipo: 'extensao', files: [] as File[] }])
+  const [projects, setProjects] = useState([
+    { nome: '', descricao: '', bolsa: 'sem-bolsa', tipo: 'extensao' },
+  ])
 
-  const handleCreateProject = async (index: number) => {
-    const { nome, descricao, bolsa, tipo, files } = projects[index]
-
+  const handleCreateProjects = async () => {
     try {
-      const formData = new FormData()
-      formData.append('nome', nome)
-      formData.append('descricao', descricao)
-      formData.append('bolsa', bolsa === 'com-bolsa' ? 'true' : 'false')
-      formData.append('tipo', tipo === 'extensao' ? 'extensao' : 'iniciacao-cientifica')
-      formData.append('criador_id', 'p0000002')
+      // Envia todos os projetos em um único request
+      const formattedProjects = projects.map((project) => ({
+        nome: project.nome,
+        descricao: project.descricao,
+        bolsa: project.bolsa === 'com-bolsa' ? 'true' : 'false',
+        tipo: project.tipo,
+        criador_id: 'p0000002', // ID do criador (fixo para este exemplo)
+      }))
 
-      files.forEach((file) => formData.append('files', file))
+      const response = await axios.post('http://127.0.0.1:5000/PROFESSOR/CREATE/VAGA', {
+        projetos: formattedProjects, // Envia como um array de objetos
+      })
 
-      const response = await axios.post(
-        'http://127.0.0.1:5000/ADMIN/CREATE/VAGA',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      )
-
-      toast.success('Projeto criado com sucesso!')
+      toast.success('Projetos criados com sucesso!')
+      setProjects([{ nome: '', descricao: '', bolsa: 'sem-bolsa', tipo: 'extensao' }]) // Reseta o formulário
     } catch (error) {
-      toast.error('Erro ao criar projeto!')
-      console.error('Erro ao criar projeto:', error)
+      toast.error('Erro ao criar projetos!')
+      console.error('Erro ao criar projetos:', error)
     }
   }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
-    projects.forEach((_, index) => handleCreateProject(index))
-    setProjects([{ nome: '', descricao: '', bolsa: 'sem-bolsa', tipo: 'extensao', files: [] as File[] }]) // Reset after submission
+    handleCreateProjects()
   }
 
   const handleAddForm = () => {
-    setProjects([...projects, { nome: '', descricao: '', bolsa: 'sem-bolsa', tipo: 'extensao', files: [] as File[] }])
+    setProjects([...projects, { nome: '', descricao: '', bolsa: 'sem-bolsa', tipo: 'extensao' }])
   }
 
   const handleRemoveForm = (index: number) => {
@@ -65,13 +59,13 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({ className, ...props
     }
   }
 
-  const handleInputChange = (index: number, field: string, value: string | File[]) => {
+  const handleInputChange = (index: number, field: string, value: string) => {
     const newProjects = [...projects]
     newProjects[index] = { ...newProjects[index], [field]: value }
     setProjects(newProjects)
   }
 
-  // Função para verificar se todos os campos obrigatórios estão preenchidos
+  // Verifica se todos os campos obrigatórios estão preenchidos
   const isFormValid = () => {
     return projects.every(
       (project) =>
@@ -99,7 +93,6 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({ className, ...props
               </p>
             </div>
             <div className="border-b border-gray-900/10 pb-12">
-              
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-6">
                   <label className="block text-sm font-medium leading-6 text-gray-900">
@@ -188,40 +181,39 @@ export const CriarProjeto: React.FC<CreateProjectProps> = ({ className, ...props
                 </div>
               </div>
             </div>
-			
-            <div className="flex justify-center mt-4 space-x-4">
-				<button
-					type="button"
-					className="w-[5%] font-semibold bg-transparent rounded-md border border-blue-600 hover:bg-blue-100 hover:text-blue-700 text-blue-600 transition ease-in-out delay-150"
-					onClick={handleAddForm}
-				>
-					+
-				</button>
 
-				<button
-					type="button"
-					className="w-[5%] font-semibold bg-transparent  rounded-md border border-red-600 hover:bg-red-100 hover:text-red-700 text-red-600 transition ease-in-out delay-150"
-					onClick={() => handleRemoveForm(index)}
-				>
-					-
-				</button>
+            <div className="flex justify-center mt-4 space-x-4">
+              <button
+                type="button"
+                className="w-[5%] font-semibold bg-transparent rounded-md border border-blue-600 hover:bg-blue-100 hover:text-blue-700 text-blue-600 transition ease-in-out delay-150"
+                onClick={handleAddForm}
+              >
+                +
+              </button>
+
+              <button
+                type="button"
+                className="w-[5%] font-semibold bg-transparent rounded-md border border-red-600 hover:bg-red-100 hover:text-red-700 text-red-600 transition ease-in-out delay-150"
+                onClick={() => handleRemoveForm(index)}
+              >
+                -
+              </button>
             </div>
           </div>
         ))}
 
         <div className="mt-4 flex items-center justify-end gap-x-6">
-          
           <button
             type="button"
-            className="text-sm font-semibold leading-6 text-gray-900 "
+            className="text-sm font-semibold leading-6 text-gray-900"
             onClick={() => router.push('/paineldecontrole/projetos')}
           >
             Cancelar
           </button>
-          <Button 
-            className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white " 
-            type="submit" 
-            disabled={!isFormValid()} // Botão desabilitado enquanto o formulário for inválido
+          <Button
+            className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white"
+            type="submit"
+            disabled={!isFormValid()}
           >
             Adicionar
           </Button>

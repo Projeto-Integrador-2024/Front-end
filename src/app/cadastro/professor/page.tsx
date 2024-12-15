@@ -12,7 +12,7 @@ export default function CadastroProfessor() {
   // Estados para os campos do formulário
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
-  const [siape, setSiape] = useState("");
+  const [SIAPE, setSiape] = useState("");
   const [senha, setSenha] = useState("");
 
   // Função para lidar com o cadastro
@@ -20,7 +20,7 @@ export default function CadastroProfessor() {
     e.preventDefault();
 
     const url = "http://127.0.0.1:5000/CADASTRO_PROFESSOR";
-    const data = { nome, cpf, siape, senha };
+    const data = { nome, cpf, SIAPE, senha };
 
     try {
       const response = await axios.post(url, data);
@@ -31,7 +31,7 @@ export default function CadastroProfessor() {
         setCpf("");
         setSiape("");
         setSenha("");
-        router.push("/"); // Redireciona para a página inicial
+        router.push("/login"); // Redireciona para a página inicial
       } else {
         toast.error(response.data.error || "Erro desconhecido ao realizar cadastro.");
       }
@@ -95,7 +95,7 @@ export default function CadastroProfessor() {
               type="text"
               id="siape"
               className="mt-1 p-2 border rounded-md w-full"
-              value={siape}
+              value={SIAPE}
               onChange={(e) => setSiape(e.target.value)}
               required
             />
