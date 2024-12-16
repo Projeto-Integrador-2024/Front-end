@@ -5,232 +5,77 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardFooter,
-} from '@/components/ui/card'
 
-type CardProps = React.ComponentProps<typeof Card>
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'
 
-export function Login({ className, ...props }: CardProps) {
-	const router = useRouter()
+export default function Login() {
+    const router = useRouter()
 
-	const [ra, setRa] = useState('') // Estado para armazenar o Registro Acadêmico
-	const [password, setPassword] = useState('') // Estado para armazenar a senha
+    const [ra, setRa] = useState('') // Estado para armazenar o Registro Acadêmico
+    const [password, setPassword] = useState('') // Estado para armazenar a senha
 
-	// URL do backend configurada com variável de ambiente
-	const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'
+    const handleLogin = async () => {
+    if (!ra || !password) {
+        toast.error('Por favor, preencha todos os campos.')
+        return
+    }
 
-	const handleLogin = async () => {
-		if (!ra || !password) {
-			toast.error('Por favor, preencha todos os campos.')
-			return
-		}
+    const isSIAPE = /^[0-9]{7}$/.test(ra)
 
-		// Verifica se o RA é um SIAPE (número de 7 dígitos)
-		const isSIAPE = /^[0-9]{7}$/.test(ra)
+    try {
+        const response = await axios.post(`${baseURL}/login`, {
+            username: ra,
+            senha: password,
+            isSIAPE: isSIAPE,
+        }, {
+            withCredentials: true // Incluir cookies na requisição
+        })
 
-		try {
-			// Faz a requisição ao backend Flask, incluindo o tipo de usuário
-			const response = await axios.post('http://127.0.0.1:5000/login', {
-				username: ra, // Envia o RA ou SIAPE
-				senha: password, // Envia a senha
-				isSIAPE: isSIAPE, // Envia se é um SIAPE
-			})
-
-			if (response.status === 200) {
-				const nome = response.data.sucesso || 'usuário!'
-				toast.success(`Bem-vindo, ${nome}`)
-				console.log(`Login realizado com sucesso!`)
-				router.push('/') // Redireciona para a página inicial após login
-			}
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				if (error.response) {
-					toast.error(
-						error.response.data.erro ||
-							'Erro ao realizar login. Verifique suas credenciais.'
-					)
-					console.error(
-						'Erro no servidor:',
-						error.response.data.erro || 'Erro desconhecido'
-					)
-				} else {
-					toast.error('Erro na conexão com o servidor.')
-					console.error('Erro na conexão com o servidor.')
-				}
-			} else {
-				toast.error('Erro desconhecido.')
-				console.error('Erro desconhecido:', error)
-			}
-		}
-	}
-
-	const handleLogout = async () => {
-		try {
-			// Faz a requisição de logout para o backend
-			const response = await axios.get('http://127.0.0.1:5000/logout')
-
-			if (response.status === 200) {
-				toast.success('Você foi desconectado com sucesso.')
-				router.push('/login') // Redireciona para a página de login
-			}
-		} catch (error) {
-			toast.error('Erro ao tentar fazer logout.')
-			console.error('Erro no logout:', error)
-		}
-	}
-
-	return (
-		<>
-			<ToastContainer
-				position='top-right'
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-			/>
-
-			<div className='min-h-screen flex flex-col'>
-				<header className='w-full bg-gray-800 text-white p-4 shadow-md'>
-					<div className='max-w-7xl mx-auto flex items-center justify-between'>
-						<div className='flex items-center space-x-4'>
-							<img
-								src='/images/Logo_PI.png'
-								alt='Logo'
-								className='h-20'
-							/>
-							<h1 className='text-2xl font-semibold'>
-								Portal Pesquisa e Extensão
-							</h1>
-						</div>
-						<nav className='space-x-4'>
-							<Link
-								href='/'
-								className='hover:text-gray-300'
-							>
-								Home
-							</Link>
-							<Link
-								href='/sobre'
-								className='hover:text-gray-300'
-							>
-								Sobre
-							</Link>
-							<Link
-								href='/contatos'
-								className='hover:text-gray-300'
-							>
-								Contato
-							</Link>
-						</nav>
-					</div>
-				</header>
-
-				<div className='flex items-center justify-center flex-1'>
-					<Card
-						className={className}
-						{...props}
-					>
-						<CardHeader className='flex flex-col items-center'>
-							<CardTitle className='text-3xl font-bold'>PPE</CardTitle>
-							<CardDescription className='text-2x1 font-bold'>
-								Digite suas credenciais para acessar o sistema.
-							</CardDescription>
-						</CardHeader>
-
-						<CardContent className='grid gap-4'>
-							<div className='flex flex-col items-center space-y-4 rounded-md border p-4'>
-								<input
-									type='text'
-									placeholder='Registro Acadêmico'
-									className='p-2 border rounded-md w-full'
-									value={ra}
-									onChange={(e) => setRa(e.target.value)}
-									aria-label='Registro Acadêmico'
-								/>
-								<input
-									type='password'
-									placeholder='Senha'
-									className='p-2 border rounded-md w-full'
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									aria-label='Senha'
-								/>
-							</div>
-						</CardContent>
-
-						<CardFooter className='flex flex-col'>
-							<Button
-								className='w-full font-semibold bg-green-600 hover:bg-green-700 text-white'
-								onClick={handleLogin}
-								disabled={!ra || !password}
-							>
-								Login
-							</Button>
-							<Button
-								className='mt-4 w-full font-semibold bg-transparent border border-gray-600 text-gray-600 hover:bg-gray-100 hover:text-gray-700'
-								onClick={() => router.back()}
-							>
-								Voltar
-							</Button>
-							<p className='mt-[5%]'>
-								Não possui uma conta?{' '}
-								<Link
-									href='/cadastro'
-									className='text-blue-600 hover:text-blue-300'
-								>
-									Cadastre-se
-								</Link>
-							</p>
-						</CardFooter>
-					</Card>
-				</div>
-
-				<footer className='bg-gray-800 py-5 text-slate-200 text-sm'>
-					<div className='container mx-auto px-4'>
-						<div className='flex flex-wrap items-center justify-between'>
-							<p className='text-center w-full'>
-								COPYRIGHT © 2024. TODOS OS DIREITOS RESERVADOS.
-							</p>
-							<div className='text-center w-full'>
-								<a
-									href='/'
-									className='hover:text-white mx-2'
-								>
-									Termos de Serviço
-								</a>{' '}
-								|
-								<a
-									href='/'
-									className='hover:text-white mx-2'
-								>
-									Política de Privacidade
-								</a>{' '}
-								|
-								<a
-									href='/'
-									className='hover:text-white mx-2'
-								>
-									Contato
-								</a>
-							</div>
-						</div>
-					</div>
-				</footer>
-			</div>
-		</>
-	)
+        if (response.status === 200) {
+            const nome = response.data.sucesso || 'usuário!'
+            const tipo = response.data.tipo
+            toast.success(`Bem-vindo, ${nome}`)
+            console.log(`Login realizado com sucesso!`)
+            if (tipo === 'professor') {
+                router.push('/professor-dashboard')
+            } else if (tipo === 'aluno') {
+                router.push('/aluno')
+            }
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                toast.error(error.response.data.erro || 'Erro ao realizar login. Verifique suas credenciais.')
+                console.error('Erro no servidor:', error.response.data.erro || 'Erro desconhecido')
+            } else {
+                toast.error('Erro na conexão com o servidor.')
+                console.error('Erro na conexão com o servidor.')
+            }
+        } else {
+            toast.error('Erro desconhecido.')
+            console.error('Erro desconhecido:', error)
+        }
+    }
 }
 
-export default Login
+
+    return (
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+            <div className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
+                <h2 className="text-2xl font-bold mb-4">Login</h2>
+                <div className="mb-4">
+                    <label htmlFor="ra" className="block text-sm font-medium text-gray-700">Registro Acadêmico (RA)</label>
+                    <input type="text" id="ra" className="mt-1 p-2 w-full border border-gray-300 rounded-md" value={ra} onChange={(e) => setRa(e.target.value)} />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">Senha</label>
+                    <input type="password" id="password" className="mt-1 p-2 w-full border border-gray-300 rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                <button onClick={handleLogin} className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Login</button>
+                <p className="mt-4 text-sm text-gray-600">Não possui uma conta? <Link href="/cadastro" className="text-blue-500 hover:text-blue-600">Cadastre-se</Link></p>
+            </div>
+        </div>
+    )
+}
