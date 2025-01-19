@@ -15,98 +15,138 @@ type Vaga = {
 }
 
 export default function CriarVaga() {
-    const [novaVaga, setNovaVaga] = useState<Vaga>({ nome: '', descricao: '', bolsa: 0, bolsa_valor: 0, tipo: 0 });
+    const [novasVagas, setNovasVagas] = useState<Vaga[]>([
+        { nome: '', descricao: '', bolsa: 0, bolsa_valor: 0, tipo: 0 }
+    ]);
     const router = useRouter();
 
     // Handle input changes
-    const handleChange = (field: keyof Vaga, value: any) => {
-        setNovaVaga({ ...novaVaga, [field]: value });
+    const handleChange = (index: number, field: keyof Vaga, value: any) => {
+        const updatedVagas = [...novasVagas];
+        updatedVagas[index] = { ...updatedVagas[index], [field]: value };
+        setNovasVagas(updatedVagas);
     };
 
-    // Create Vaga
-    const handleCreateVaga = async () => {
+    // Add a new empty form
+    const handleAddForm = () => {
+        setNovasVagas([...novasVagas, { nome: '', descricao: '', bolsa: 0, bolsa_valor: 0, tipo: 0 }]);
+    };
+
+    // Remove a form
+    const handleRemoveForm = (index: number) => {
+        const updatedVagas = [...novasVagas];
+        updatedVagas.splice(index, 1);
+        setNovasVagas(updatedVagas);
+    };
+
+    // Create all Vagas
+    const handleCreateVagas = async () => {
         try {
-            if (novaVaga.nome && novaVaga.descricao && novaVaga.bolsa !== undefined) {
-                await axios.post(`${baseURL}/PROFESSOR/CREATE/VAGA`, novaVaga, {
-                    withCredentials: true
-                });
-                alert('Vaga criada com sucesso!');
-                router.push('/professor-dashboard'); // Redirecionar após criação
+            for (const vaga of novasVagas) {
+                if (vaga.nome && vaga.descricao && vaga.bolsa !== undefined) {
+                    await axios.post(`${baseURL}/PROFESSOR/CREATE/VAGA`, vaga, {
+                        withCredentials: true
+                    });
+                }
             }
+            alert('Vagas criadas com sucesso!');
+            router.push('/professor-dashboard'); // Redirecionar após criação
         } catch (error) {
-            console.error("Erro ao criar vaga:", error);
-            alert('Erro ao criar a vaga. Por favor, tente novamente.');
+            console.error("Erro ao criar vagas:", error);
+            alert('Erro ao criar as vagas. Por favor, tente novamente.');
         }
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <form className="w-1/2 bg-white p-6 shadow-lg rounded-md">
-                <h2 className="text-xl font-bold mb-4">Criar Nova Vaga</h2>
-                <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome da Vaga</label>
-                <input
-                    type="text"
-                    id="nome"
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                    value={novaVaga.nome}
-                    onChange={(e) => handleChange('nome', e.target.value)} 
-                />
-                <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mt-4">Descrição</label>
-                <textarea
-                    id="descricao"
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                    value={novaVaga.descricao}
-                    onChange={(e) => handleChange('descricao', e.target.value)} 
-                />
-                <label className="block text-sm font-medium text-gray-700 mt-4">Bolsa</label>
-                <div className="flex items-center mt-1">
-                    <input
-                        type="radio"
-                        id="bolsa-0"
-                        name="bolsa"
-                        className="mr-2"
-                        value="0"
-                        checked={novaVaga.bolsa === 0}
-                        onChange={() => handleChange('bolsa', 0)}
-                    />
-                    <label htmlFor="bolsa-0">Não</label>
-                    <input
-                        type="radio"
-                        id="bolsa-1"
-                        name="bolsa"
-                        className="ml-4 mr-2"
-                        value="1"
-                        checked={novaVaga.bolsa === 1}
-                        onChange={() => handleChange('bolsa', 1)}
-                    />
-                    <label htmlFor="bolsa-1">Sim</label>
-                </div>
-                <label htmlFor="bolsa_valor" className="block text-sm font-medium text-gray-700 mt-4">Valor da Bolsa</label>
-                <input
-                    type="number"
-                    id="bolsa_valor"
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                    value={novaVaga.bolsa_valor || ''}
-                    onChange={(e) => handleChange('bolsa_valor', parseInt(e.target.value) || 0)}
-                />
-                <label htmlFor="tipo" className="block text-sm font-medium text-gray-700 mt-4">Tipo</label>
-                <select
-                    id="tipo"
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                    value={novaVaga.tipo}
-                    onChange={(e) => handleChange('tipo', parseInt(e.target.value))}
-                >
-                    <option value="0">Pesquisa</option>
-                    <option value="1">Extensão</option>
-                </select>
+                <h2 className="text-xl font-bold mb-4">Criar Novas Vagas</h2>
+                {novasVagas.map((vaga, index) => (
+                    <div key={index} className="border-b border-gray-300 pb-4 mb-4">
+                        <h3 className="text-lg font-semibold">Vaga {index + 1}</h3>
+                        <label htmlFor={`nome-${index}`} className="block text-sm font-medium text-gray-700">Nome da Vaga</label>
+                        <input
+                            type="text"
+                            id={`nome-${index}`}
+                            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                            value={vaga.nome}
+                            onChange={(e) => handleChange(index, 'nome', e.target.value)}
+                        />
+                        <label htmlFor={`descricao-${index}`} className="block text-sm font-medium text-gray-700 mt-4">Descrição</label>
+                        <textarea
+                            id={`descricao-${index}`}
+                            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                            value={vaga.descricao}
+                            onChange={(e) => handleChange(index, 'descricao', e.target.value)}
+                        />
+                        <label className="block text-sm font-medium text-gray-700 mt-4">Bolsa</label>
+                        <div className="flex items-center mt-1">
+                            <input
+                                type="radio"
+                                id={`bolsa-0-${index}`}
+                                name={`bolsa-${index}`}
+                                className="mr-2"
+                                value="0"
+                                checked={vaga.bolsa === 0}
+                                onChange={() => handleChange(index, 'bolsa', 0)}
+                            />
+                            <label htmlFor={`bolsa-0-${index}`}>Não</label>
+                            <input
+                                type="radio"
+                                id={`bolsa-1-${index}`}
+                                name={`bolsa-${index}`}
+                                className="ml-4 mr-2"
+                                value="1"
+                                checked={vaga.bolsa === 1}
+                                onChange={() => handleChange(index, 'bolsa', 1)}
+                            />
+                            <label htmlFor={`bolsa-1-${index}`}>Sim</label>
+                        </div>
+                        <label htmlFor={`bolsa_valor-${index}`} className="block text-sm font-medium text-gray-700 mt-4">Valor da Bolsa</label>
+                        <input
+                            type="number"
+                            id={`bolsa_valor-${index}`}
+                            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                            value={vaga.bolsa_valor || ''}
+                            onChange={(e) => handleChange(index, 'bolsa_valor', parseInt(e.target.value) || 0)}
+                        />
+                        <label htmlFor={`tipo-${index}`} className="block text-sm font-medium text-gray-700 mt-4">Tipo</label>
+                        <div className="flex items-center">
+                            <select
+                                id={`tipo-${index}`}
+                                className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                                value={vaga.tipo}
+                                onChange={(e) => handleChange(index, 'tipo', parseInt(e.target.value))}
+                            >
+                                <option value="0">Pesquisa</option>
+                                <option value="1">Extensão</option>
+                            </select>
+                            <button
+                                type="button"
+                                onClick={handleAddForm}
+                                className="ml-2 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-700 text-sm"
+                            >
+                                +
+                            </button>
+                            {novasVagas.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveForm(index)}
+                                    className="ml-2 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700 text-sm"
+                                >
+                                    -
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
                 <button
                     type="button"
-                    onClick={handleCreateVaga}
+                    onClick={handleCreateVagas}
                     className="bg-green-500 text-white p-2 rounded-md mt-6 w-full hover:bg-green-700"
                 >
-                    Criar Vaga
+                    Criar Vagas
                 </button>
-
                 <button
                     type="button"
                     onClick={() => router.push('/professor-dashboard')}
