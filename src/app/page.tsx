@@ -86,7 +86,7 @@ export default function Example() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* ToastContainer adicionado no JSX */}
+
       <ToastContainer
         position="top-right"
         autoClose={5000}
