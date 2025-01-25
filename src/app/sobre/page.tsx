@@ -75,7 +75,7 @@ const LandingPage = () => {
           <p className="text-xl leading-relaxed">
             A busca por oportunidades de projetos de pesquisa e extensão pode ser desafiadora para muitos alunos universitários. Com a grande quantidade de informações espalhadas por diferentes departamentos e universidades, encontrar uma vaga que se alinhe com os interesses acadêmicos e profissionais de cada aluno pode ser uma tarefa difícil e demorada. 
             <br /><br />
-            Pensando nisso, criamos o <strong>ProjetoVagas</strong>, uma plataforma única que reúne em um só lugar as vagas de pesquisa e extensão de diversas universidades. Nosso objetivo é facilitar o acesso dos alunos a essas oportunidades, promover a interação entre alunos e professores e ampliar as possibilidades de desenvolvimento acadêmico e profissional.
+            Pensando nisso, criamos o <strong>PPE</strong>, uma plataforma única que reúne em um só lugar as vagas de pesquisa e extensão de diversas universidades. Nosso objetivo é facilitar o acesso dos alunos a essas oportunidades, promover a interação entre alunos e professores e ampliar as possibilidades de desenvolvimento acadêmico e profissional.
           </p>
         </div>
       </section>
