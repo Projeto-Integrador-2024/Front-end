@@ -16,7 +16,7 @@ type Vaga = {
     bolsa_valor: number; 
     tipo: number; 
     criador_id?: string;
-    inscritos?: string[];
+    inscritos?: string[]; // Lista de alunos inscritos (adicionada para exibição)
 }
 
 export default function ProfessorDashboard() {
@@ -172,7 +172,7 @@ export default function ProfessorDashboard() {
             <div className="w-full md:w-1/2 bg-white p-6 rounded-md shadow-md">
                 <h2 className="text-2xl font-bold mb-4">Dashboard do Professor</h2>
                 
-                <div className="max-h-96 overflow-y-auto mb-4"> {/* Scrollbar ativada quando há mais de 3 vagas */}
+                <div className="max-h-96 overflow-y-auto mb-4">
                     <ul>
                         {vagas.map(vaga => (
                             <li key={vaga.vaga_id} className="border-b py-2">
@@ -181,6 +181,18 @@ export default function ProfessorDashboard() {
                                 <div className="text-gray-700">Bolsa: {vaga.bolsa === 0 ? 'Não possui bolsa' : 'Possui bolsa'}</div>
                                 <div className="text-gray-700">Valor da Bolsa: {vaga.bolsa === 0 ? 'N/A' : vaga.bolsa_valor}</div>
                                 <div className="text-gray-700">Tipo: {vaga.tipo === 0 ? 'Pesquisa' : 'Extensão'}</div>
+                                <div className="text-gray-700 mt-2">
+                                    <span className="font-semibold">Inscritos:</span>
+                                    {vaga.inscritos && vaga.inscritos.length > 0 ? (
+                                        <ul className="list-disc pl-5 mt-1">
+                                            {vaga.inscritos.map((aluno, index) => (
+                                                <li key={index}>{aluno}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <span className="text-gray-500"> Nenhum inscrito</span>
+                                    )}
+                                </div>
                                 <button onClick={() => handleDeleteVaga(vaga.vaga_id!)} className="bg-red-500 text-white p-1 rounded-md hover:bg-red-600 mt-2 mr-2">Deletar</button>
                                 <button onClick={() => handleEditVaga(vaga)} className="bg-blue-500 text-white p-1 rounded-md hover:bg-blue-600 mt-2">Editar</button>
                             </li>
