@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react' // Ícone de seta para a esquerda
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000'
 
@@ -16,53 +17,63 @@ export default function Login() {
     const [password, setPassword] = useState('') // Estado para armazenar a senha
 
     const handleLogin = async () => {
-    if (!ra || !password) {
-        toast.error('Por favor, preencha todos os campos.')
-        return
-    }
-
-    const isSIAPE = /^[0-9]{7}$/.test(ra)
-
-    try {
-        const response = await axios.post(`${baseURL}/login`, {
-            username: ra,
-            senha: password,
-            isSIAPE: isSIAPE,
-        }, {
-            withCredentials: true // Incluir cookies na requisição
-        })
-
-        if (response.status === 200) {
-            const nome = response.data.sucesso || 'usuário!'
-            const tipo = response.data.tipo
-            toast.success(`Bem-vindo, ${nome}`)
-            console.log(`Login realizado com sucesso!`)
-            if (tipo === 'professor') {
-                router.push('/professor-dashboard')
-            } else if (tipo === 'aluno') {
-                router.push('/aluno')
-            }
+        if (!ra || !password) {
+            toast.error('Por favor, preencha todos os campos.')
+            return
         }
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            if (error.response) {
-                toast.error(error.response.data.erro || 'Erro ao realizar login. Verifique suas credenciais.')
-                console.error('Erro no servidor:', error.response.data.erro || 'Erro desconhecido')
+
+        const isSIAPE = /^[0-9]{7}$/.test(ra)
+
+        try {
+            const response = await axios.post(`${baseURL}/login`, {
+                username: ra,
+                senha: password,
+                isSIAPE: isSIAPE,
+            }, {
+                withCredentials: true // Incluir cookies na requisição
+            })
+
+            if (response.status === 200) {
+                const nome = response.data.sucesso || 'usuário!'
+                const tipo = response.data.tipo
+                toast.success(`Bem-vindo, ${nome}`)
+                console.log(`Login realizado com sucesso!`)
+                if (tipo === 'professor') {
+                    router.push('/professor-dashboard')
+                } else if (tipo === 'aluno') {
+                    router.push('/aluno')
+                }
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    toast.error(error.response.data.erro || 'Erro ao realizar login. Verifique suas credenciais.')
+                    console.error('Erro no servidor:', error.response.data.erro || 'Erro desconhecido')
+                } else {
+                    toast.error('Erro na conexão com o servidor.')
+                    console.error('Erro na conexão com o servidor.')
+                }
             } else {
-                toast.error('Erro na conexão com o servidor.')
-                console.error('Erro na conexão com o servidor.')
+                toast.error('Erro desconhecido.')
+                console.error('Erro desconhecido:', error)
             }
-        } else {
-            toast.error('Erro desconhecido.')
-            console.error('Erro desconhecido:', error)
         }
     }
-}
-
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 relative">
+            {/* Toast notifications */}
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
+            {/* Botão com Seta */}
+            <button
+                onClick={() => router.back()} // Usa router.back() para voltar à página anterior
+                className="absolute top-4 left-4 bg-gray-200 text-gray-700 p-2 rounded-full shadow hover:bg-gray-300 hover:text-gray-900 flex items-center justify-center"
+            >
+                <ArrowLeft className="w-5 h-5" /> {/* Ícone de seta */}
+            </button>
+
+            {/* Caixa de Login */}
             <div className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-4">Login</h2>
                 <div className="mb-4">

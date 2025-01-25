@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from 'js-cookie'
 
 interface Project {
   vaga_id: number;
@@ -19,43 +18,31 @@ interface Project {
 
 const ITEMS_PER_PAGE = 4;
 
-export default function ProfessorProjects() {
+export default function Example() {
   const [items, setItems] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Assume authenticated for simplicity
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
- // useEffect(() => {
-    // Verificar se o cookie 'user' está presente
-    //const user = Cookies.get('user'); // Substitua 'user' pelo nome do cookie que você usa
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
- //   if (!user) {
- //       router.push('/login');
-  //    console.log('Usuário não autenticado');
-   //   
-  //  } else {
- //     console.log('Usuário autenticado:', user);
-  //    fetchProjects();
-   // }
- // }, [router]);
 
   const fetchProjects = async () => {
-    axios.defaults.withCredentials = true; // Isso configura globalmente para enviar cookies em todas as requisições
-
     try {
-      const response = await axios.get('http://127.0.0.1:5000/PROFESSOR/GET_MY/VAGA', {
-        withCredentials: true, // Certifique-se de que o cookie é enviado nas requisições
+      const response = await fetch("http://127.0.0.1:5000/GET_ALL_VAGAS", {
+        method: "GET",
+        headers: { "User-Agent": "insomnia/10.0.0" },
       });
-
-      if (response.status === 200) {
-        setItems(response.data); // Armazena os projetos recebidos
-      } else {
-        toast.error('Não foi possível carregar os projetos.');
+      if (!response.ok) {
+        throw new Error(`Erro na resposta da API: ${response.status}`);
       }
+      const data = await response.json();
+      setItems(data);
     } catch (error) {
-      console.error('Erro ao buscar projetos:', error);
-      toast.error('Erro ao buscar projetos.');
+      console.error("Erro ao buscar projetos:", error);
     }
   };
 
@@ -98,7 +85,8 @@ export default function ProfessorProjects() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen  flex flex-col">
+
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -146,7 +134,7 @@ export default function ProfessorProjects() {
       </header>
 
       <main className="flex-grow bg-gray-100 flex flex-col justify-center items-center p-4">
-        <h1 className="text-3xl font-bold mb-5 text-gray-800 mb-[2%]">Seus Projetos</h1>
+        <h1 className="text-3xl font-bold mb-5 text-gray-800 mb-[2%]">Projetos disponíveis</h1>
 
         <div className="w-full max-w-4xl flex justify-end mb-4">
           <input
@@ -264,12 +252,6 @@ export default function ProfessorProjects() {
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
                   <span className="sr-only">Próximo</span>
                 </button>
-                <button
-					className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
-					onClick={() => router.push('/professor/criarprojeto')}
-				>
-					Adicionar Projeto
-				</button>
               </nav>
             </div>
           </div>

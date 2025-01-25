@@ -143,7 +143,7 @@ export default function ProfessorDashboard() {
           </div>
           <nav className="space-x-4 flex items-center">
             <Link href="/" className="hover:text-gray-300">Home</Link>
-            <Link href="/sobre" className="hover:text-gray-300">Sobre</Link>
+            <Link href="/projetos" className="hover:text-gray-300">Projetos</Link>
             <Link href="/contato" className="hover:text-gray-300">Contato</Link>
             {isAuthenticated ? (
               <div className="flex items-center space-x-2">

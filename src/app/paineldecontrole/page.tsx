@@ -17,7 +17,7 @@ export function ControlPanel() {
           </div>
           <nav className="space-x-4">
             <Link href="/" className="hover:text-gray-300">Home</Link>
-            <Link href="/sobre" className="hover:text-gray-300">Sobre</Link>
+            <Link href="/projetos" className="hover:text-gray-300">Projetos</Link>
             <Link href="/contato" className="hover:text-gray-300">Contato</Link>
             <button
               type="button"

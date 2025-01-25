@@ -23,8 +23,8 @@ export function Cadastro() {
             <Link href="/" className="hover:text-gray-300">
               Home
             </Link>
-            <Link href="/sobre" className="hover:text-gray-300">
-              Sobre
+            <Link href="/projetos" className="hover:text-gray-300">
+              Projetos
             </Link>
             <Link href="/contatos" className="hover:text-gray-300">
               Contato
