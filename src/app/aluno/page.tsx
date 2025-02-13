@@ -17,7 +17,9 @@ type Vaga = {
   bolsa_valor: number;
   tipo: number;
   criador_id: string;
-  inscritos: string[];
+  candidatos: string[];
+  favoritos: string;
+  alunos_selecionados: string;
 };
 
 export default function AlunoDashboard() {
@@ -27,25 +29,26 @@ export default function AlunoDashboard() {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/check-auth`, {
-          withCredentials: true,
-        });
+ useEffect(() => {
+   const checkAuth = async () => {
+     try {
+       const response = await axios.get(`${baseURL}/check-auth`, {
+         withCredentials: true,
+       });
 
-        if (response.status !== 200 && response.status !== 304) {
-          router.push('/login');
-        } else {
-          fetchVagas();
-          fetchMyVagas();
-        }
-      } catch (error) {
-        router.push('/login');
-      }
-    };
+       if (response.status !== 200 && response.status !== 304) {
+         router.push('/login');
+       } else {
+         fetchVagas();
+         fetchMyVagas();
+       }
+     } catch (error) {
+      // router.push('/login');
+        console.log("asd")
+     }
+   };
 
-    checkAuth();
+   checkAuth();
   }, [router]);
 
   const fetchVagas = async () => {
@@ -67,14 +70,20 @@ export default function AlunoDashboard() {
       const response = await axios.get(`${baseURL}/ALUNO/GET_MY_VAGAS`, {
         withCredentials: true,
       });
-
+  
       if (response.status === 200) {
-        setMyVagas(response.data);
+        // Mapear a chave "id" para "vaga_id" para compatibilidade com o tipo Vaga
+        const vagasMapeadas = response.data.map((vaga: any) => ({
+          ...vaga,
+          vaga_id: vaga.id,
+        }));
+        setMyVagas(vagasMapeadas);
       }
     } catch (error) {
       console.error('Erro ao buscar minhas vagas:', error);
     }
   };
+  
 
   const handleInscreverVaga = async (id: number) => {
     try {
@@ -83,15 +92,29 @@ export default function AlunoDashboard() {
         { id },
         { withCredentials: true }
       );
-
+  
       if (response.status === 200 || response.status === 201) {
+        console.log('Inscrição realizada com sucesso!');
         fetchVagas();
         fetchMyVagas();
+      } else {
+        console.error(`Erro ao inscrever: status ${response.status}`);
       }
-    } catch (error) {
-      console.error('Erro ao inscrever na vaga:', error);
+    } catch (error: any) { // Aqui, estamos afirmando que 'error' pode ser de qualquer tipo
+      if (error.response) {
+        // Erro relacionado à resposta da requisição
+        console.error('Erro na resposta:', error.response.data);
+      } else if (error.request) {
+        // Erro ao fazer a requisição
+        console.error('Erro na requisição:', error.request);
+      } else {
+        // Qualquer outro erro
+        console.error('Erro ao inscrever na vaga:', error.message);
+      }
     }
   };
+  
+  
 
   const handleDesinscreverVaga = async (id: number) => {
     try {
@@ -119,6 +142,25 @@ export default function AlunoDashboard() {
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }
+  };
+
+  const handleFavoritarVaga = async (id: number) => {
+    try {
+      const response = await axios.post(
+        `${baseURL}/ALUNO/FAVORITAR_VAGA`,
+        { id_vaga: id },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        console.log('Vaga favoritada com sucesso!');
+        fetchVagas(); // Atualiza a lista de vagas
+      } else {
+        console.error('Erro ao favoritar a vaga:', response.data);
+      }
+    } catch (error) {
+      console.error('Erro ao favoritar a vaga:', error);
+    }
+  
   };
 
   const totalPages = Math.ceil(vagas.length / ITEMS_PER_PAGE);
@@ -255,6 +297,13 @@ export default function AlunoDashboard() {
               >
                 Inscrever-se
               </button>
+
+              <button
+                  onClick={() => handleFavoritarVaga(vaga.vaga_id)}
+                  className="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 mt-2"
+                >
+                  Favoritar
+                </button>
             </div>
           ))}
 
