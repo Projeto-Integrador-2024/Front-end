@@ -133,6 +133,22 @@ export default function ProfessorDashboard() {
         }
     };
 
+    const handleSelectAluno = async (vagaId: number, alunoRa: string) => {
+        try {
+            const response = await axios.post(`${baseURL}/PROFESSOR/SELECIONAR_ALUNOS`, {
+                id_vaga: vagaId,
+                alunos_ra: [alunoRa],
+            }, { withCredentials: true });
+            
+            if (response.status === 200) {
+                alert('Aluno selecionado com sucesso!');
+                fetchVagas();
+            }
+        } catch (error) {
+            console.error('Erro ao selecionar aluno:', error);
+        }
+    };
+
     return (
     <div className="h-screen flex flex-col">
         <header className="w-full bg-white text-stone-600 p-4">
@@ -186,7 +202,15 @@ export default function ProfessorDashboard() {
                                     {vaga.inscritos && vaga.inscritos.length > 0 ? (
                                         <ul className="list-disc pl-5 mt-1">
                                             {vaga.inscritos.map((aluno, index) => (
-                                                <li key={index}>{aluno}</li>
+                                                <li key={index} className="flex justify-between">
+                                                    {aluno}
+                                                    <button
+                                                        onClick={() => handleSelectAluno(vaga.vaga_id!, aluno)}
+                                                        className="ml-2 bg-green-500 text-white p-1 rounded-md hover:bg-green-700"
+                                                    >
+                                                        Selecionar
+                                                    </button>
+                                                </li>
                                             ))}
                                         </ul>
                                     ) : (
